@@ -1,39 +1,60 @@
 import 'package:flutter/material.dart';
-import 'package:quiver/async.dart';
 
-class PlayersArea extends StatefulWidget {
+class PlayersArea extends StatelessWidget {
   final Function clickedCallback;
   final bool _isActive;
-  final int _playersTimeStart;  // in seconds
+  final int _time; // in seconds
 
-  const PlayersArea({Key key, this.clickedCallback, isActive, playersTimeStart}) :
-     _isActive = isActive,  _playersTimeStart = playersTimeStart, super(key: key);
+  const PlayersArea({Key key, this.clickedCallback, isActive, time})
+      : _isActive = isActive,
+        _time = time,
+        super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _PlayerState();
+  Widget build(BuildContext context) {
+    return Container(
+      constraints: BoxConstraints.expand(),
+      child: MaterialButton(
+        color: _isActive ? Colors.lightBlue : Colors.grey,
+        onPressed: () => clickedCallback(),
+        child: Text(_time.toString()),
+      ),
+    );
+  }
 }
 
-class _PlayerState extends State<PlayersArea> {
-  int _playersTime;  // in seconds
+/* class _PlayerState extends State<PlayersArea> {
+  int _playersTime; // in seconds
   CountdownTimer timer;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget._isActive) {
+      _activateTimer();
+    } else {
+      _deactivateTimer();
+    }
+  }
 
   void _activateTimer() {
     setState(() {
       _playersTime = widget._playersTimeStart;
     });
-    timer = CountdownTimer(Duration(seconds: _playersTime, milliseconds: 500),
-            Duration(seconds: 1));
+    timer = CountdownTimer(
+      Duration(seconds: _playersTime, milliseconds: 500),
+      Duration(seconds: 1),
+    );
     timer.listen((timer) {
       setState(() {
         _playersTime = timer.remaining.inSeconds;
+        if (timer.remaining.isNegative) timer.cancel();
       });
     });
   }
 
   void _deactivateTimer() {
-    if (timer != null) {
-      timer.cancel();
-    }
+    timer?.cancel();
   }
 
   int _getRemainingTime() {
@@ -47,12 +68,6 @@ class _PlayerState extends State<PlayersArea> {
 
   @override
   Widget build(BuildContext context) {
-    if (widget._isActive) {
-      _activateTimer();
-    } else {
-      _deactivateTimer();
-    }
-
     return Container(
       constraints: BoxConstraints.expand(),
       child: MaterialButton(
@@ -65,3 +80,4 @@ class _PlayerState extends State<PlayersArea> {
     );
   }
 }
+ */
