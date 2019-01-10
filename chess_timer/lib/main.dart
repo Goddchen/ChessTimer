@@ -16,16 +16,21 @@ class MyApp extends StatelessWidget {
         home: SafeArea(
           child: Material(
             child: Container(
-              color: Colors.red,
               child: Column(
                 children: <Widget>[
                   Expanded(
-                    child: PlayersArea(),
+                    child: Transform.rotate(
+                      angle: pi,
+                      child: Container(
+                        margin: EdgeInsets.all(8),
+                        child: PlayersArea(),
+                      ),
+                    ),
                   ),
                   MiddleArea(),
                   Expanded(
-                    child: Transform.rotate(
-                      angle: pi,
+                    child: Container(
+                      margin: EdgeInsets.all(8),
                       child: PlayersArea(),
                     ),
                   )

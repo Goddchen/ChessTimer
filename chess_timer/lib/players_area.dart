@@ -9,9 +9,12 @@ class _PlayerState extends State<PlayersArea> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.red,
-      alignment: Alignment.center,
-      child: Text('Player Area'),
+      constraints: BoxConstraints.expand(),
+      child: MaterialButton(
+        color: Colors.grey,
+        onPressed: () => {},
+        child: Text('Player Area'),
+      ),
     );
   }
 }
