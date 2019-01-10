@@ -10,6 +10,8 @@ class _PlayerState extends State<PlayersArea> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.red,
+      alignment: Alignment.center,
+      child: Text('Player Area'),
     );
   }
 }
