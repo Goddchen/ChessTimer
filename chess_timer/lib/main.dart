@@ -23,7 +23,9 @@ class MyApp extends StatelessWidget {
                       angle: pi,
                       child: Container(
                         margin: EdgeInsets.all(8),
-                        child: PlayersArea(),
+                        child: PlayersArea(
+                          f: () => debugPrint("Clicked"),
+                        ),
                       ),
                     ),
                   ),
@@ -31,7 +33,9 @@ class MyApp extends StatelessWidget {
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.all(8),
-                      child: PlayersArea(),
+                      child: PlayersArea(
+                        f: () => debugPrint("Clicked"),
+                      ),
                     ),
                   )
                 ],
