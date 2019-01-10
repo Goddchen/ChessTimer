@@ -8,6 +8,8 @@ class PlayersArea extends StatefulWidget {
 class _PlayerState extends State<PlayersArea> {
   @override
   Widget build(BuildContext context) {
-    return Container(color: Colors.red, height: 300);
+    return Container(
+      color: Colors.red,
+    );
   }
 }
