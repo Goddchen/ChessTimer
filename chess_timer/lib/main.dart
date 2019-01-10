@@ -5,10 +5,38 @@ import 'dart:math';
 
 void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
+    State<StatefulWidget> createState() => _ChessTimerState();
+}
+
+class _ChessTimerState extends State<MyApp> {
+  int _playerAtTurn = 0;
+  var _playersTime = [0, 10, 10];  // 0 is for pause
+  
+  void firstPlayerStarted(int remainingTime) {
+    if (_playerAtTurn != 1) {
+      debugPrint("First Player started");
+      setState(() {
+        _playersTime[_playerAtTurn] = remainingTime;
+        _playerAtTurn = 1;
+      });
+    }
+  }
+
+  void secondPlayerStarted(int remainingTime) {
+    if (_playerAtTurn != 2) {
+      debugPrint("Second Player started");
+      setState(() {
+        _playersTime[_playerAtTurn] = remainingTime;
+        _playerAtTurn = 2;
+      });
+    }
+  }
+
+  @override
+    Widget build(BuildContext context) {
+      return MaterialApp(
         title: 'Chess Timer',
         theme: ThemeData(
           primarySwatch: Colors.blue,
@@ -24,7 +52,9 @@ class MyApp extends StatelessWidget {
                       child: Container(
                         margin: EdgeInsets.all(8),
                         child: PlayersArea(
-                          f: () => debugPrint("Clicked"),
+                          isActive: _playerAtTurn == 1,
+                          playersTimeStart: _playersTime[1],
+                          clickedCallback: firstPlayerStarted,
                         ),
                       ),
                     ),
@@ -34,7 +64,9 @@ class MyApp extends StatelessWidget {
                     child: Container(
                       margin: EdgeInsets.all(8),
                       child: PlayersArea(
-                        f: () => debugPrint("Clicked"),
+                        isActive: _playerAtTurn == 2,
+                        playersTimeStart: _playersTime[2],
+                        clickedCallback: secondPlayerStarted,
                       ),
                     ),
                   )
@@ -43,5 +75,5 @@ class MyApp extends StatelessWidget {
             ),
           ),
         ));
-  }
+    }
 }
