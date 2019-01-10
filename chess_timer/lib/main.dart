@@ -17,17 +17,19 @@ class _ChessTimerState extends State<MyApp> {
   var _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds]; // 0 is for pause
   CountdownTimer _timer;
 
-  void playerStopped(int player) {
-    if (_playerAtTurn == player || _playerAtTurn == 0) {
-      _timer?.cancel();
+  void setPlayerAtTurn(int triggeringPlayer) {
       setState(() {
         if (_playerAtTurn == 0) {
-          _playerAtTurn = player;
+          _playerAtTurn = triggeringPlayer;
         } else {
           _playersTime[_playerAtTurn] += _turnTimeSeconds;
-          _playerAtTurn = player == 1 ? 2 : 1;
+          _playerAtTurn = triggeringPlayer == 1 ? 2 : 1;
         }
       });
+  }
+
+  void startTimerForCurrentPlayer() {
+    _timer?.cancel();
       _timer = CountdownTimer(
           Duration(seconds: _playersTime[_playerAtTurn], milliseconds: 500), Duration(seconds: 1));
       _timer.listen((timer) {
@@ -35,6 +37,12 @@ class _ChessTimerState extends State<MyApp> {
           _playersTime[_playerAtTurn] = timer.remaining.inSeconds;
         });
       });
+  }
+
+  void playerStopped(int triggeringPlayer) {
+    if (_playerAtTurn == triggeringPlayer || _playerAtTurn == 0) {
+      setPlayerAtTurn(triggeringPlayer);
+      startTimerForCurrentPlayer();
     }
   }
 
