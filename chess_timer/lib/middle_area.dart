@@ -29,6 +29,17 @@ class MiddleArea extends StatelessWidget {
         ),
         InkWell(
           child: Icon(
+            Icons.refresh,
+            size: 48,
+          ),
+          onTap: () {
+            ChessTimerState state =
+                context.ancestorStateOfType(TypeMatcher<ChessTimerState>());
+            state.reset();
+          },
+        ),
+        InkWell(
+          child: Icon(
             Icons.settings,
             size: 48,
           ),

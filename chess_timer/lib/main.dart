@@ -25,6 +25,15 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   Animation<double> animation;
   AnimationController animationController;
 
+  void reset() {
+    setState(() {
+      _timer.cancel();
+      _playerAtTurn = 0;
+      _turnTimeSeconds = PrefService.getInt('turn_time');
+      _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
+    });
+  }
+
   void setNewTurnTime(int timeInSeconds) {
     setState(() {
       _turnTimeSeconds = timeInSeconds;
