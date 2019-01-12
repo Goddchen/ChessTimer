@@ -5,6 +5,7 @@ import 'dart:math';
 import 'package:quiver/async.dart';
 import 'package:flutter/animation.dart';
 import 'package:preferences/preferences.dart';
+import 'package:vibrate/vibrate.dart';
 
 void main() async {
   await PrefService.init();
@@ -27,9 +28,9 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   void reset() {
     setState(() {
-      _timer.cancel();
+      _timer?.cancel();
       _playerAtTurn = 0;
-      _turnTimeSeconds = PrefService.getInt('turn_time');
+      _turnTimeSeconds = PrefService.getInt('turn_time') ?? 10;
       _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
     });
   }
@@ -71,11 +72,23 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
         Duration(seconds: _playersTime[_playerAtTurn], milliseconds: 500),
         Duration(seconds: 1));
     _timer.listen((timer) {
-      setState(() {
-        _playersTime[_playerAtTurn] = timer.remaining.inSeconds;
-      });
-      if (timer.remaining.inMilliseconds > 0 && timer.remaining.inSeconds < 5)
-        _startAnimation();
+      if (!timer.remaining.isNegative) {
+        setState(() {
+          _playersTime[_playerAtTurn] = timer.remaining.inSeconds;
+        });
+        if (timer.remaining.inMilliseconds > 0 &&
+            timer.remaining.inSeconds < 5) {
+          _startAnimation();
+          if (PrefService.getBool('vibrate_last_seconds') ?? true) {
+            Vibrate.feedback(FeedbackType.medium);
+          }
+        }
+        if (timer.remaining.inSeconds == 0) {
+          if (PrefService.getBool('vibrate_on_time_up') ?? true) {
+            Vibrate.feedback(FeedbackType.error);
+          }
+        }
+      }
     });
   }
 
@@ -83,6 +96,9 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
     if (_playerAtTurn == triggeringPlayer || _playerAtTurn == 0) {
       _setPlayerAtTurn(triggeringPlayer);
       _startTimerForCurrentPlayer();
+      if (PrefService.getBool('vibrate_on_end') == true) {
+        Vibrate.feedback(FeedbackType.heavy);
+      }
     }
   }
 
