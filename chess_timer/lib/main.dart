@@ -4,25 +4,36 @@ import 'middle_area.dart';
 import 'dart:math';
 import 'package:quiver/async.dart';
 import 'package:flutter/animation.dart';
+import 'package:preferences/preferences.dart';
 
-void main() => runApp(MyApp());
+void main() async {
+  await PrefService.init();
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _ChessTimerState();
+  State<StatefulWidget> createState() => ChessTimerState();
 }
 
-class _ChessTimerState extends State<MyApp>
+class ChessTimerState extends State<MyApp>
     with SingleTickerProviderStateMixin {
-  static int _turnTimeSeconds = 10;
+  int _turnTimeSeconds;
   int _playerAtTurn = 0;
-  var _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds]; // 0 is for pause
+  var _playersTime = [0, 0, 0];
   var _playerScale = [0, 1.0, 1.0];
   CountdownTimer _timer;
   Animation<double> animation;
   AnimationController animationController;
 
-  void setPlayerAtTurn(int triggeringPlayer) {
+  void setNewTurnTime(int timeInSeconds) {
+    setState(() {
+          _turnTimeSeconds = timeInSeconds;
+          _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
+        });
+  }
+
+  void _setPlayerAtTurn(int triggeringPlayer) {
     setState(() {
       if (_playerAtTurn == 0) {
         _playerAtTurn = triggeringPlayer;
@@ -33,7 +44,7 @@ class _ChessTimerState extends State<MyApp>
     });
   }
 
-  void startTimerForCurrentPlayer() {
+  void _startTimerForCurrentPlayer() {
     _timer?.cancel();
     _timer = CountdownTimer(
         Duration(seconds: _playersTime[_playerAtTurn], milliseconds: 500),
@@ -43,18 +54,18 @@ class _ChessTimerState extends State<MyApp>
         _playersTime[_playerAtTurn] = timer.remaining.inSeconds;
       });
       if (timer.remaining.inMilliseconds > 0 && timer.remaining.inSeconds < 5)
-        startAnimation();
+        _startAnimation();
     });
   }
 
-  void playerStopped(int triggeringPlayer) {
+  void _playerStopped(int triggeringPlayer) {
     if (_playerAtTurn == triggeringPlayer || _playerAtTurn == 0) {
-      setPlayerAtTurn(triggeringPlayer);
-      startTimerForCurrentPlayer();
+      _setPlayerAtTurn(triggeringPlayer);
+      _startTimerForCurrentPlayer();
     }
   }
 
-  void startAnimation() {
+  void _startAnimation() {
     animationController.reset();
     animationController.forward();
     animationController.addStatusListener((status) {
@@ -64,9 +75,7 @@ class _ChessTimerState extends State<MyApp>
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
+  void _initAnimations() {
     animationController = AnimationController(
       duration: Duration(milliseconds: 100),
       vsync: this,
@@ -80,6 +89,14 @@ class _ChessTimerState extends State<MyApp>
           });
         });
       });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _initAnimations();
+    _turnTimeSeconds = PrefService.getInt('turn_time');
+    _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
   }
 
   @override
@@ -110,7 +127,7 @@ class _ChessTimerState extends State<MyApp>
                           child: PlayersArea(
                             isActive: _playerAtTurn == 1,
                             time: _playersTime[1],
-                            clickedCallback: () => playerStopped(1),
+                            clickedCallback: () => _playerStopped(1),
                           ),
                         ),
                       ),
@@ -125,7 +142,7 @@ class _ChessTimerState extends State<MyApp>
                         child: PlayersArea(
                           isActive: _playerAtTurn == 2,
                           time: _playersTime[2],
-                          clickedCallback: () => playerStopped(2),
+                          clickedCallback: () => _playerStopped(2),
                         ),
                       ),
                     ),

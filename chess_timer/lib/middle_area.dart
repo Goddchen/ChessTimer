@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'settings.dart';
 
 class MiddleArea extends StatelessWidget {
   @override
@@ -7,30 +8,14 @@ class MiddleArea extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
         InkWell(
-          child: SizedBox.fromSize(
-            size: Size.square(48),
-            child: Icon(Icons.photo_album),
+          child: Icon(
+            Icons.settings,
+            size: 48,
           ),
-          onTap: () {},
-        ),
-        InkWell(
-          child: SizedBox.fromSize(
-            size: Size.square(48),
-            child: Icon(Icons.photo_album),
-          ),
-          onTap: () {},
-        ),InkWell(
-          child: SizedBox.fromSize(
-            size: Size.square(48),
-            child: Icon(Icons.photo_album),
-          ),
-          onTap: () {},
-        ),InkWell(
-          child: SizedBox.fromSize(
-            size: Size.square(48),
-            child: Icon(Icons.photo_album),
-          ),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => SettingsWidget()));
+          },
         ),
       ],
     );

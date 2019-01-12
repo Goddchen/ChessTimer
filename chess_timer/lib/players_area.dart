@@ -24,7 +24,7 @@ class PlayersArea extends StatelessWidget {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  '${NumberFormat('00').format((_timeSeconds / 60).floor())}:${NumberFormat('00').format((_timeSeconds % 60))}',
+                  '${NumberFormat('00').format(((_timeSeconds ?? 10) / 60).floor())}:${NumberFormat('00').format(((_timeSeconds ?? 10) % 60))}',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 64,
@@ -36,7 +36,7 @@ class PlayersArea extends StatelessWidget {
                 child: Transform.rotate(
                   angle: pi,
                   child: Text(
-                    '${NumberFormat('00').format((_timeSeconds / 60).floor())}:${NumberFormat('00').format((_timeSeconds % 60))}',
+                    '${NumberFormat('00').format(((_timeSeconds ?? 10) / 60).floor())}:${NumberFormat('00').format(((_timeSeconds ?? 10) % 60))}',
                     style: TextStyle(
                       fontSize: 24,
                     ),
