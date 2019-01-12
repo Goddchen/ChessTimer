@@ -16,8 +16,7 @@ class MyApp extends StatefulWidget {
   State<StatefulWidget> createState() => ChessTimerState();
 }
 
-class ChessTimerState extends State<MyApp>
-    with SingleTickerProviderStateMixin {
+class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   int _turnTimeSeconds;
   int _playerAtTurn = 0;
   var _playersTime = [0, 0, 0];
@@ -28,9 +27,22 @@ class ChessTimerState extends State<MyApp>
 
   void setNewTurnTime(int timeInSeconds) {
     setState(() {
-          _turnTimeSeconds = timeInSeconds;
-          _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
-        });
+      _turnTimeSeconds = timeInSeconds;
+      _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
+    });
+  }
+
+  void pause() {
+    if (_timer?.isRunning == true) {
+      _timer.cancel();
+      setState(() {});
+    }
+  }
+
+  void resume() {
+    if (_timer?.isRunning == false) {
+      _startTimerForCurrentPlayer();
+    }
   }
 
   void _setPlayerAtTurn(int triggeringPlayer) {
@@ -133,7 +145,7 @@ class ChessTimerState extends State<MyApp>
                       ),
                     ),
                   ),
-                  MiddleArea(),
+                  MiddleArea(_timer?.isRunning == true),
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.all(8),
