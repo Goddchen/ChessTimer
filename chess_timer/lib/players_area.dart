@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'dart:math';
+import 'localizations.dart';
 
 class PlayersArea extends StatelessWidget {
   final Function clickedCallback;
@@ -20,7 +21,9 @@ class PlayersArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double avgTurnTime =
-        _turnCounter == 0 ? 0 : _gameTimeSeconds / _turnCounter;
+        (_turnCounter ?? 0) == 0 || (_gameTimeSeconds ?? 0) == 0
+            ? 0
+            : _gameTimeSeconds / _turnCounter;
     return Container(
       constraints: BoxConstraints.expand(),
       child: MaterialButton(
@@ -50,10 +53,11 @@ class PlayersArea extends StatelessWidget {
                       fontSize: 24,
                     ),
                   ),
-                  Text('Total time: ${NumberFormat('00').format(((_gameTimeSeconds ?? 0) / 60).floor())}:' +
+                  Text('${AppLocalizations.of(context).get('total_time')}:' +
+                      ' ${NumberFormat('00').format(((_gameTimeSeconds ?? 0) / 60).floor())}:' +
                       '${NumberFormat('00').format(((_gameTimeSeconds ?? 0) % 60))}' +
-                      ' | Turns: $_turnCounter' +
-                      ' | Avg turn: ${NumberFormat('0.0').format(avgTurnTime)}s')
+                      ' | ${AppLocalizations.of(context).get('turns')}: ${_turnCounter ?? 0}' +
+                      ' | ${AppLocalizations.of(context).get('avg_turn')}: ${NumberFormat('0.0').format(avgTurnTime)}s')
                 ]),
               ),
             ),

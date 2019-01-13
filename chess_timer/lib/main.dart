@@ -6,6 +6,8 @@ import 'package:quiver/async.dart';
 import 'package:flutter/animation.dart';
 import 'package:preferences/preferences.dart';
 import 'package:vibrate/vibrate.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'localizations.dart';
 
 void main() async {
   await PrefService.init();
@@ -153,6 +155,15 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        localizationsDelegates: [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('en'),
+          const Locale('de'),
+        ],
         title: 'Chess Timer',
         theme: ThemeData(
           primarySwatch: Colors.blue,
