@@ -25,6 +25,7 @@ dependencies:
   preferences: ^1.0.8
   shared_preferences: ^0.4.3
   vibrate: ^0.0.4
+  screen: ^0.0.4
 
 dev_dependencies:
   flutter_test:

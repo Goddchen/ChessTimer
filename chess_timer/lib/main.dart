@@ -8,6 +8,7 @@ import 'package:preferences/preferences.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'localizations.dart';
+import 'package:screen/screen.dart';
 
 void main() async {
   await PrefService.init();
@@ -147,11 +148,13 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
     _initAnimations();
     _turnTimeSeconds = PrefService.getInt('turn_time') ?? defaultPlayersTime;
     _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
+    Screen.keepOn(true);
   }
 
   @override
   void dispose() {
     animationController.dispose();
+    Screen.keepOn(false);
     super.dispose();
   }
 
