@@ -22,6 +22,8 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   int _playerAtTurn = 0;
   var _playersTime = [0, 0, 0];
   var _playerScale = [0, 1.0, 1.0];
+  int _gameDurationSeconds;
+  int _turnCounter;
   CountdownTimer _timer;
   Animation<double> animation;
   AnimationController animationController;
@@ -32,6 +34,8 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
       _playerAtTurn = 0;
       _turnTimeSeconds = PrefService.getInt('turn_time') ?? 10;
       _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
+      _gameDurationSeconds = 0;
+      _turnCounter = 0;
     });
   }
 
@@ -59,9 +63,12 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
     setState(() {
       if (_playerAtTurn == 0) {
         _playerAtTurn = triggeringPlayer;
+        _gameDurationSeconds = 0;
+        _turnCounter = 0;
       } else {
         _playersTime[_playerAtTurn] += _turnTimeSeconds;
         _playerAtTurn = triggeringPlayer == 1 ? 2 : 1;
+        _turnCounter++;
       }
     });
   }
@@ -75,6 +82,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
       if (!timer.remaining.isNegative) {
         setState(() {
           _playersTime[_playerAtTurn] = timer.remaining.inSeconds;
+          _gameDurationSeconds++;
         });
         if (timer.remaining.inMilliseconds > 0 &&
             timer.remaining.inSeconds < 5) {
@@ -165,6 +173,8 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
                             isActive: _playerAtTurn == 1,
                             time: _playersTime[1],
                             clickedCallback: () => _playerStopped(1),
+                            gameTime: _gameDurationSeconds,
+                            turnCounter: _turnCounter,
                           ),
                         ),
                       ),
@@ -180,6 +190,8 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
                           isActive: _playerAtTurn == 2,
                           time: _playersTime[2],
                           clickedCallback: () => _playerStopped(2),
+                          gameTime: _gameDurationSeconds,
+                          turnCounter: _turnCounter,
                         ),
                       ),
                     ),
