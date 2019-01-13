@@ -26,7 +26,8 @@ class PlayersArea extends StatelessWidget {
             : _gameTimeSeconds / _turnCounter;
     return Container(
       constraints: BoxConstraints.expand(),
-      child: MaterialButton(
+      child: RaisedButton(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         color: _isActive ? Colors.green[300] : Colors.grey[400],
         onPressed: () => clickedCallback(),
         child: Stack(
