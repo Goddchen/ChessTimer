@@ -27,7 +27,7 @@ class PlayersArea extends StatelessWidget {
     return Container(
       constraints: BoxConstraints.expand(),
       child: MaterialButton(
-        color: _isActive ? Colors.lightBlue : Colors.grey,
+        color: _isActive ? Colors.green[300] : Colors.grey[400],
         onPressed: () => clickedCallback(),
         child: Stack(
           children: <Widget>[
