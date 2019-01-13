@@ -12,8 +12,9 @@ before_script:
   - git clone https://github.com/flutter/flutter.git -b beta
   - ./flutter/bin/flutter doctor
 script:
-  - ./flutter/bin/flutter test
-  - ./flutter/bin/flutter -v build apk
+  - cd chess_timer
+  - ../flutter/bin/flutter test
+  - ../flutter/bin/flutter -v build apk
 cache:
   directories:
     - $HOME/.pub-cache
