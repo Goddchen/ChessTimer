@@ -81,8 +81,8 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   void _startTimerForCurrentPlayer() {
     _timer?.cancel();
     _timer = CountdownTimer(
-        Duration(seconds: _playersTime[_playerAtTurn], milliseconds: 500),
-        Duration(seconds: 1),
+      Duration(seconds: _playersTime[_playerAtTurn], milliseconds: 500),
+      Duration(seconds: 1),
     );
     _timer.listen((timer) {
       if (!timer.remaining.isNegative) {
@@ -92,7 +92,9 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
         });
         if (timer.remaining.inMilliseconds > 0 &&
             timer.remaining.inSeconds < 5) {
-          _startAnimation();
+          if (PrefService.getBool('animate_last_seconds') ?? true) {
+            _startAnimation();
+          }
           if (PrefService.getBool('vibrate_last_seconds') ?? true) {
             Vibrate.feedback(FeedbackType.medium);
           }

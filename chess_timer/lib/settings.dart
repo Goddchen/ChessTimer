@@ -39,6 +39,11 @@ class SettingsWidget extends StatelessWidget {
           'vibrate_on_time_up',
           defaultVal: true,
         ),
+        CheckboxPreference(
+          AppLocalizations.of(context).get('settings_animate_last_seconds'),
+          'animate_last_seconds',
+          defaultVal: true,
+        ),
       ]),
     );
   }

@@ -25,6 +25,7 @@ class AppLocalizations {
       'settings_vibrate_on_end': 'Vibrate on turn end',
       'settings_vibrate_on_last_seconds': 'Vibrate on last turn seconds',
       'settings_vibrate_time_up': 'Vibrate when time is up',
+      'settings_animate_last_seconds': 'Animate on last turn seconds',
     },
     'de': {
       'total_time': 'Gesamtzeit',
@@ -38,6 +39,7 @@ class AppLocalizations {
       'settings_vibrate_on_end': 'Vibration bei Zugende',
       'settings_vibrate_on_last_seconds': 'Vibration in den letzten Sekunden',
       'settings_vibrate_time_up': 'Vibration bei Ablauf der Zeit',
+      'settings_animate_last_seconds': 'Animation in den letzten Sekunden',
     },
   };
 
