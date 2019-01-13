@@ -20,6 +20,8 @@ class MyApp extends StatefulWidget {
 }
 
 class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
+  static final defaultPlayersTime = 20;
+
   int _turnTimeSeconds;
   int _playerAtTurn = 0;
   var _playersTime = [0, 0, 0];
@@ -34,7 +36,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
     setState(() {
       _timer?.cancel();
       _playerAtTurn = 0;
-      _turnTimeSeconds = PrefService.getInt('turn_time') ?? 10;
+      _turnTimeSeconds = PrefService.getInt('turn_time') ?? defaultPlayersTime;
       _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
       _gameDurationSeconds = 0;
       _turnCounter = 0;
@@ -79,7 +81,8 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
     _timer?.cancel();
     _timer = CountdownTimer(
         Duration(seconds: _playersTime[_playerAtTurn], milliseconds: 500),
-        Duration(seconds: 1));
+        Duration(seconds: 1),
+    );
     _timer.listen((timer) {
       if (!timer.remaining.isNegative) {
         setState(() {
@@ -142,7 +145,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _initAnimations();
-    _turnTimeSeconds = PrefService.getInt('turn_time');
+    _turnTimeSeconds = PrefService.getInt('turn_time') ?? defaultPlayersTime;
     _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
   }
 
