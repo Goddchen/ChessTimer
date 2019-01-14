@@ -33,9 +33,9 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   int _playerAtTurn = 0;
   var _playersTime = [0, 0, 0];
   var _playerScale = [0, 1.0, 1.0];
-  int _turnCounter;
+  var _turnCounter = [0, 0, 0];
   CountdownTimer _timer;
-  Stopwatch _stopwatch = Stopwatch();
+  var _stopwatches = [Stopwatch(), Stopwatch(), Stopwatch()];
   Animation<double> animation;
   AnimationController animationController;
 
@@ -45,8 +45,8 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
       _playerAtTurn = 0;
       _turnTimeSeconds = PrefService.getInt('turn_time') ?? defaultPlayersTime;
       _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
-      _turnCounter = 0;
-      _stopwatch?.reset();
+      _turnCounter = [0, 0, 0];
+      _stopwatches.forEach((sw) => sw.reset());
     });
   }
 
@@ -58,7 +58,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   void pause() {
-    _stopwatch?.stop();
+    _stopwatches.forEach((sw) => sw.stop());
     if (_timer?.isRunning == true) {
       _timer.cancel();
       setState(() {});
@@ -66,7 +66,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   void resume() {
-    _stopwatch?.start();
+    _stopwatches[_playerAtTurn].start();
     if (_timer?.isRunning == false) {
       _startTimerForCurrentPlayer();
     }
@@ -76,12 +76,11 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
     setState(() {
       if (_playerAtTurn == 0) {
         _playerAtTurn = triggeringPlayer;
-        _turnCounter = 0;
-        _stopwatch?.reset();
+        _turnCounter = [0, 0, 0];
+        _stopwatches.forEach((sw) => sw.reset());
       } else {
         _playersTime[_playerAtTurn] += _turnTimeSeconds;
         _playerAtTurn = triggeringPlayer == 1 ? 2 : 1;
-        _turnCounter++;
       }
     });
   }
@@ -113,11 +112,13 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
         }
       }
     });
-    _stopwatch.start();
+    _stopwatches[_playerAtTurn].start();
+    _turnCounter[_playerAtTurn]++;
   }
 
   void _playerStopped(int triggeringPlayer) {
     if (_playerAtTurn == triggeringPlayer || _playerAtTurn == 0) {
+      _stopwatches[_playerAtTurn].stop();
       _setPlayerAtTurn(triggeringPlayer);
       _startTimerForCurrentPlayer();
       if (PrefService.getBool('vibrate_on_end') == true) {
@@ -201,14 +202,18 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
                             isActive: _playerAtTurn == 1,
                             time: _playersTime[1],
                             clickedCallback: () => _playerStopped(1),
-                            gameTime: _stopwatch.elapsed.inSeconds,
-                            turnCounter: _turnCounter,
+                            gameTime: _stopwatches
+                                .map((sw) => sw.elapsed.inSeconds)
+                                .reduce((a, b) => a + b),
+                            turnCounter: _turnCounter[1],
+                            playerTimeSeconds:
+                                _stopwatches[1].elapsed.inSeconds,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  MiddleArea(_stopwatch?.isRunning == true),
+                  MiddleArea(_stopwatches.any((sw) => sw.isRunning) == true),
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.all(8),
@@ -218,8 +223,11 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
                           isActive: _playerAtTurn == 2,
                           time: _playersTime[2],
                           clickedCallback: () => _playerStopped(2),
-                          gameTime: _stopwatch.elapsed.inSeconds,
-                          turnCounter: _turnCounter,
+                          gameTime: _stopwatches
+                              .map((sw) => sw.elapsed.inSeconds)
+                              .reduce((a, b) => a + b),
+                          turnCounter: _turnCounter[2],
+                          playerTimeSeconds: _stopwatches[2].elapsed.inSeconds,
                         ),
                       ),
                     ),
