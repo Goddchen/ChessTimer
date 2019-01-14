@@ -10,6 +10,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'localizations.dart';
 import 'package:screen/screen.dart';
 import 'package:flutter/services.dart';
+import 'dart:async';
 
 void main() async {
   await SystemChrome.setPreferredOrientations([
@@ -32,9 +33,9 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   int _playerAtTurn = 0;
   var _playersTime = [0, 0, 0];
   var _playerScale = [0, 1.0, 1.0];
-  int _gameDurationSeconds;
   int _turnCounter;
   CountdownTimer _timer;
+  Stopwatch _stopwatch = Stopwatch();
   Animation<double> animation;
   AnimationController animationController;
 
@@ -44,8 +45,8 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
       _playerAtTurn = 0;
       _turnTimeSeconds = PrefService.getInt('turn_time') ?? defaultPlayersTime;
       _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
-      _gameDurationSeconds = 0;
       _turnCounter = 0;
+      _stopwatch?.reset();
     });
   }
 
@@ -57,6 +58,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   void pause() {
+    _stopwatch?.stop();
     if (_timer?.isRunning == true) {
       _timer.cancel();
       setState(() {});
@@ -64,6 +66,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
   }
 
   void resume() {
+    _stopwatch?.start();
     if (_timer?.isRunning == false) {
       _startTimerForCurrentPlayer();
     }
@@ -73,8 +76,8 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
     setState(() {
       if (_playerAtTurn == 0) {
         _playerAtTurn = triggeringPlayer;
-        _gameDurationSeconds = 0;
         _turnCounter = 0;
+        _stopwatch?.reset();
       } else {
         _playersTime[_playerAtTurn] += _turnTimeSeconds;
         _playerAtTurn = triggeringPlayer == 1 ? 2 : 1;
@@ -93,7 +96,6 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
       if (!timer.remaining.isNegative) {
         setState(() {
           _playersTime[_playerAtTurn] = timer.remaining.inSeconds;
-          _gameDurationSeconds++;
         });
         if (timer.remaining.inMilliseconds > 0 &&
             timer.remaining.inSeconds < 5) {
@@ -111,6 +113,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
         }
       }
     });
+    _stopwatch.start();
   }
 
   void _playerStopped(int triggeringPlayer) {
@@ -156,6 +159,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
     _turnTimeSeconds = PrefService.getInt('turn_time') ?? defaultPlayersTime;
     _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
     Screen.keepOn(true);
+    Timer.periodic(Duration(milliseconds: 500), (timer) => setState(() {}));
   }
 
   @override
@@ -197,14 +201,14 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
                             isActive: _playerAtTurn == 1,
                             time: _playersTime[1],
                             clickedCallback: () => _playerStopped(1),
-                            gameTime: _gameDurationSeconds,
+                            gameTime: _stopwatch.elapsed.inSeconds,
                             turnCounter: _turnCounter,
                           ),
                         ),
                       ),
                     ),
                   ),
-                  MiddleArea(_timer?.isRunning == true),
+                  MiddleArea(_stopwatch?.isRunning == true),
                   Expanded(
                     child: Container(
                       margin: EdgeInsets.all(8),
@@ -214,7 +218,7 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
                           isActive: _playerAtTurn == 2,
                           time: _playersTime[2],
                           clickedCallback: () => _playerStopped(2),
-                          gameTime: _gameDurationSeconds,
+                          gameTime: _stopwatch.elapsed.inSeconds,
                           turnCounter: _turnCounter,
                         ),
                       ),
