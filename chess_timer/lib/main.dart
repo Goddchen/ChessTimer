@@ -9,8 +9,13 @@ import 'package:vibrate/vibrate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'localizations.dart';
 import 'package:screen/screen.dart';
+import 'package:flutter/services.dart';
 
 void main() async {
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitDown,
+    DeviceOrientation.portraitUp,
+  ]);
   await PrefService.init();
   runApp(MyApp());
 }
