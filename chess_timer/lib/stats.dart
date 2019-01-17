@@ -56,35 +56,37 @@ class StatisticsWidget extends StatelessWidget {
     int playerTurnsSeconds =
         _stopwatches.map((sw) => sw.elapsed.inSeconds).reduce((a, b) => a + b);
     int turnCount = _playerTurnCount.reduce((a, b) => a + b);
-    return Column(
-      children: <Widget>[
-        ListTile(
-          title: Text(
-            AppLocalizations.of(context).get('total_time'),
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          ListTile(
+            title: Text(
+              AppLocalizations.of(context).get('total_time'),
+            ),
+            subtitle: Text(
+              NumberFormat('00').format((_totalTimeSeconds / 60).floor()) +
+                  ':' +
+                  NumberFormat('00').format(_totalTimeSeconds % 60),
+            ),
           ),
-          subtitle: Text(
-            NumberFormat('00').format((_totalTimeSeconds / 60).floor()) +
-                ':' +
-                NumberFormat('00').format(_totalTimeSeconds % 60),
+          Divider(),
+          ListTile(
+            title: Text(
+              AppLocalizations.of(context).get('turns'),
+            ),
+            subtitle: Text(_playerTurnCount.reduce((a, b) => a + b).toString()),
           ),
-        ),
-        Divider(),
-        ListTile(
-          title: Text(
-            AppLocalizations.of(context).get('turns'),
+          Divider(),
+          ListTile(
+            title: Text(AppLocalizations.of(context).get('avg_turn')),
+            subtitle: Text(
+              NumberFormat('0.0').format(
+                      turnCount == 0 ? 0 : (playerTurnsSeconds / turnCount)) +
+                  's',
+            ),
           ),
-          subtitle: Text(_playerTurnCount.reduce((a, b) => a + b).toString()),
-        ),
-        Divider(),
-        ListTile(
-          title: Text(AppLocalizations.of(context).get('avg_turn')),
-          subtitle: Text(
-            NumberFormat('0.0').format(
-                    turnCount == 0 ? 0 : (playerTurnsSeconds / turnCount)) +
-                's',
-          ),
-        )
-      ],
+        ],
+      ),
     );
   }
 }
