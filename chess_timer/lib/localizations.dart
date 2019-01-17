@@ -14,6 +14,8 @@ class AppLocalizations {
 
   static Map<String, Map<String, String>> localizedValues = {
     'en': {
+      'app_name': 'Chess Timer',
+      'statistics': 'Statistics',
       'total_time': 'Total time',
       'turns': 'Turns',
       'avg_turn': 'Avg turn',
@@ -28,6 +30,8 @@ class AppLocalizations {
       'settings_animate_last_seconds': 'Animate on last turn seconds',
     },
     'de': {
+      'app_name': 'Schach-Timer',
+      'statistics': 'Statistiken',
       'total_time': 'Gesamtzeit',
       'turns': 'Züge',
       'avg_turn': 'Durchschn. Zug',

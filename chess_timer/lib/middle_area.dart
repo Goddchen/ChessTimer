@@ -40,13 +40,22 @@ class MiddleArea extends StatelessWidget {
         ),
         InkWell(
           child: Icon(
-            Icons.settings,
+            Icons.stop,
             size: 48,
           ),
           onTap: () {
-            Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SettingsWidget()));
+            ChessTimerState state =
+                context.ancestorStateOfType(TypeMatcher<ChessTimerState>());
+            state.stop();
           },
+        ),
+        InkWell(
+          child: Icon(
+            Icons.settings,
+            size: 48,
+          ),
+          onTap: () => Navigator.push(context,
+              MaterialPageRoute(builder: (context) => SettingsWidget())),
         ),
       ],
     );

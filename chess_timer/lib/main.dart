@@ -11,6 +11,7 @@ import 'localizations.dart';
 import 'package:screen/screen.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
+import 'stats.dart';
 
 void main() async {
   await SystemChrome.setPreferredOrientations([
@@ -21,12 +22,35 @@ void main() async {
   runApp(MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      localizationsDelegates: [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ],
+      supportedLocales: [
+        const Locale('en'),
+        const Locale('de'),
+      ],
+      title: AppLocalizations.of(context)?.get('app_name') ?? 'Chess Timer',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MainWidget(),
+    );
+  }
+}
+
+class MainWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => ChessTimerState();
 }
 
-class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
+class ChessTimerState extends State<MainWidget>
+    with SingleTickerProviderStateMixin {
   static final defaultPlayersTime = 20;
 
   int _turnTimeSeconds;
@@ -70,6 +94,19 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
     if (_timer?.isRunning == false) {
       _startTimerForCurrentPlayer();
     }
+  }
+
+  void stop() {
+    pause();
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => StatisticsScreenWidget(
+                _stopwatches
+                    .map((sw) => sw.elapsed.inSeconds)
+                    .reduce((a, b) => a + b),
+                _turnCounter,
+                _stopwatches)));
   }
 
   void _setPlayerAtTurn(int triggeringPlayer) {
@@ -172,70 +209,55 @@ class ChessTimerState extends State<MyApp> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        localizationsDelegates: [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-        ],
-        supportedLocales: [
-          const Locale('en'),
-          const Locale('de'),
-        ],
-        title: 'Chess Timer',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-        ),
-        home: SafeArea(
-          child: Material(
-            child: Container(
-              child: Column(
-                children: <Widget>[
-                  Expanded(
-                    child: Transform.rotate(
-                      angle: pi,
-                      child: Container(
-                        margin: EdgeInsets.all(8),
-                        child: Transform.scale(
-                          scale: _playerScale[1],
-                          child: PlayersArea(
-                            isActive: _playerAtTurn == 1,
-                            time: _playersTime[1],
-                            clickedCallback: () => _playerStopped(1),
-                            gameTime: _stopwatches
-                                .map((sw) => sw.elapsed.inSeconds)
-                                .reduce((a, b) => a + b),
-                            turnCounter: _turnCounter[1],
-                            playerTimeSeconds:
-                                _stopwatches[1].elapsed.inSeconds,
-                          ),
-                        ),
+    return SafeArea(
+      child: Material(
+        child: Container(
+          child: Column(
+            children: <Widget>[
+              Expanded(
+                child: Transform.rotate(
+                  angle: pi,
+                  child: Container(
+                    margin: EdgeInsets.all(8),
+                    child: Transform.scale(
+                      scale: _playerScale[1],
+                      child: PlayersArea(
+                        isActive: _playerAtTurn == 1,
+                        time: _playersTime[1],
+                        clickedCallback: () => _playerStopped(1),
+                        gameTime: _stopwatches
+                            .map((sw) => sw.elapsed.inSeconds)
+                            .reduce((a, b) => a + b),
+                        turnCounter: _turnCounter[1],
+                        playerTimeSeconds: _stopwatches[1].elapsed.inSeconds,
                       ),
                     ),
                   ),
-                  MiddleArea(_stopwatches.any((sw) => sw.isRunning) == true),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.all(8),
-                      child: Transform.scale(
-                        scale: _playerScale[2],
-                        child: PlayersArea(
-                          isActive: _playerAtTurn == 2,
-                          time: _playersTime[2],
-                          clickedCallback: () => _playerStopped(2),
-                          gameTime: _stopwatches
-                              .map((sw) => sw.elapsed.inSeconds)
-                              .reduce((a, b) => a + b),
-                          turnCounter: _turnCounter[2],
-                          playerTimeSeconds: _stopwatches[2].elapsed.inSeconds,
-                        ),
-                      ),
-                    ),
-                  )
-                ],
+                ),
               ),
-            ),
+              MiddleArea(_stopwatches.any((sw) => sw.isRunning) == true),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.all(8),
+                  child: Transform.scale(
+                    scale: _playerScale[2],
+                    child: PlayersArea(
+                      isActive: _playerAtTurn == 2,
+                      time: _playersTime[2],
+                      clickedCallback: () => _playerStopped(2),
+                      gameTime: _stopwatches
+                          .map((sw) => sw.elapsed.inSeconds)
+                          .reduce((a, b) => a + b),
+                      turnCounter: _turnCounter[2],
+                      playerTimeSeconds: _stopwatches[2].elapsed.inSeconds,
+                    ),
+                  ),
+                ),
+              )
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 }
