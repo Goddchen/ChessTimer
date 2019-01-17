@@ -67,7 +67,7 @@ class PlayersArea extends StatelessWidget {
               alignment: Alignment.bottomCenter,
               child: Text(
                 '${AppLocalizations.of(context).get('total_time')}: ' +
-                    '${NumberFormat('00').format(((_gameTimeSeconds ?? 0) / 60).floor())}: ' +
+                    '${NumberFormat('00').format(((_gameTimeSeconds ?? 0) / 60).floor())}:' +
                     '${NumberFormat('00').format(((_gameTimeSeconds ?? 0) % 60))}\n' +
                     '${AppLocalizations.of(context).get('turns')}: ${_turnCounter ?? 0}\n' +
                     '${AppLocalizations.of(context).get('avg_turn')}: ${NumberFormat('0.0').format(avgTurnTime)}s',

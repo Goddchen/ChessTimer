@@ -70,7 +70,10 @@ class ChessTimerState extends State<MainWidget>
       _turnTimeSeconds = PrefService.getInt('turn_time') ?? defaultPlayersTime;
       _playersTime = [0, _turnTimeSeconds, _turnTimeSeconds];
       _turnCounter = [0, 0, 0];
-      _stopwatches.forEach((sw) => sw.reset());
+      _stopwatches.forEach((sw) {
+        sw.reset();
+        sw.stop();
+      });
     });
   }
 
