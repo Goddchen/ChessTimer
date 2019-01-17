@@ -15,29 +15,65 @@ class StatisticsScreenWidget extends StatelessWidget {
         _stopwatches = stopwatches;
 
   @override
-  Widget build(BuildContext context) => Column(
-        children: <Widget>[
-          Expanded(
-            child: Transform.rotate(
-              angle: pi,
-              child: Scaffold(
-                appBar: AppBar(
-                    title:
-                        Text(AppLocalizations.of(context).get('statistics'))),
-                body: StatisticsWidget(
+  Widget build(BuildContext context) => Material(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Transform.rotate(
+                angle: pi,
+                child: StatisticsWidget(
                     _totalTimeSeconds, _playerTurnCount, _stopwatches),
               ),
             ),
-          ),
-          Expanded(
-            child: Scaffold(
-              appBar: AppBar(
-                  title: Text(AppLocalizations.of(context).get('statistics'))),
-              body: StatisticsWidget(
+            Container(
+              padding: EdgeInsets.all(8),
+              color: Theme.of(context).primaryColor,
+              child: Row(
+                children: <Widget>[
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      child: Container(
+                        padding: EdgeInsets.all(12),
+                        child: Icon(
+                          Icons.arrow_back,
+                          size: 24,
+                          color: Colors.white,
+                        ),
+                      ),
+                      onTap: () => Navigator.pop(context),
+                    ),
+                  ),
+                  Column(
+                    children: <Widget>[
+                      Transform.rotate(
+                        angle: pi,
+                        child: Text(
+                          AppLocalizations.of(context).get('statistics'),
+                          style: Theme.of(context)
+                              .textTheme
+                              .title
+                              .apply(color: Colors.white),
+                        ),
+                      ),
+                      Text(
+                        AppLocalizations.of(context).get('statistics'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .title
+                            .apply(color: Colors.white),
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ),
+            Expanded(
+              child: StatisticsWidget(
                   _totalTimeSeconds, _playerTurnCount, _stopwatches),
             ),
-          ),
-        ],
+          ],
+        ),
       );
 }
 
