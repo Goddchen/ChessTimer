@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'players_area.dart';
-import 'middle_area.dart';
+import 'package:chess_timer/players_area.dart';
+import 'package:chess_timer/middle_area.dart';
 import 'dart:math';
 import 'package:quiver/async.dart';
 import 'package:flutter/animation.dart';
 import 'package:preferences/preferences.dart';
 import 'package:vibrate/vibrate.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'localizations.dart';
+import 'package:chess_timer/localizations.dart';
 import 'package:screen/screen.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
-import 'stats.dart';
+import 'package:chess_timer/stats.dart';
 
 void main() async {
   await SystemChrome.setPreferredOrientations([
@@ -238,7 +238,10 @@ class ChessTimerState extends State<MainWidget>
                   ),
                 ),
               ),
-              MiddleArea(_stopwatches.any((sw) => sw.isRunning) == true),
+              MiddleArea(
+                _stopwatches.any((sw) => sw.isRunning) == true,
+                reset,
+              ),
               Expanded(
                 child: Container(
                   margin: EdgeInsets.all(8),

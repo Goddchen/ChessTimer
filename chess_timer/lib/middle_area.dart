@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'settings.dart';
-import 'main.dart';
+import 'package:chess_timer/settings.dart';
+import 'package:chess_timer/main.dart';
 
 class MiddleArea extends StatelessWidget {
   final bool _isRunning;
+  final Function _onPrefsChanged;
 
-  const MiddleArea(this._isRunning);
+  const MiddleArea(this._isRunning, this._onPrefsChanged);
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +55,10 @@ class MiddleArea extends StatelessWidget {
             Icons.settings,
             size: 48,
           ),
-          onTap: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => SettingsWidget())),
+          onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => SettingsWidget(_onPrefsChanged))),
         ),
       ],
     );
