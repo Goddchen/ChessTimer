@@ -31,6 +31,7 @@ dependencies:
   vibrate: ^0.0.4
   screen: ^0.0.4
   flutter_launcher_icons: "^0.7.0"
+  flutter_bloc: ^0.5.1
 
 dev_dependencies:
   flutter_test:

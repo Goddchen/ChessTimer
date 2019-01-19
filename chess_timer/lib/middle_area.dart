@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:chess_timer/settings.dart';
 import 'package:chess_timer/main.dart';
+import 'package:chess_timer/blocs/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MiddleArea extends StatelessWidget {
   final bool _isRunning;
@@ -10,6 +12,7 @@ class MiddleArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    ChessTimerBloc bloc = BlocProvider.of<ChessTimerBloc>(context);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: <Widget>[
@@ -19,12 +22,10 @@ class MiddleArea extends StatelessWidget {
             size: 48,
           ),
           onTap: () {
-            ChessTimerState state =
-                context.ancestorStateOfType(TypeMatcher<ChessTimerState>());
             if (_isRunning) {
-              state.pause();
+              bloc.dispatch(PauseEvent());
             } else {
-              state.resume();
+              bloc.dispatch(ResumeEvent());
             }
           },
         ),
@@ -33,22 +34,14 @@ class MiddleArea extends StatelessWidget {
             Icons.refresh,
             size: 48,
           ),
-          onTap: () {
-            ChessTimerState state =
-                context.ancestorStateOfType(TypeMatcher<ChessTimerState>());
-            state.reset();
-          },
+          onTap: () => bloc.dispatch(ResetEvent()),
         ),
         InkWell(
           child: Icon(
             Icons.stop,
             size: 48,
           ),
-          onTap: () {
-            ChessTimerState state =
-                context.ancestorStateOfType(TypeMatcher<ChessTimerState>());
-            state.stop();
-          },
+          onTap: () => bloc.dispatch(StopEvent(context)),
         ),
         InkWell(
           child: Icon(
