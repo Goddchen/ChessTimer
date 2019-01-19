@@ -28,6 +28,8 @@ class AppLocalizations {
       'settings_vibrate_on_last_seconds': 'Vibrate on last turn seconds',
       'settings_vibrate_time_up': 'Vibrate when time is up',
       'settings_animate_last_seconds': 'Animate on last turn seconds',
+      'settings_sound_time_up': 'Play sound when time is up',
+      'settings_sound_last_seconds': 'Play sound on last turn seconds',
     },
     'de': {
       'app_name': 'Schach-Timer',
@@ -44,6 +46,8 @@ class AppLocalizations {
       'settings_vibrate_on_last_seconds': 'Vibration in den letzten Sekunden',
       'settings_vibrate_time_up': 'Vibration bei Ablauf der Zeit',
       'settings_animate_last_seconds': 'Animation in den letzten Sekunden',
+      'settings_sound_time_up': 'Sound bei Ablauf der Zeit',
+      'settings_sound_last_seconds': 'Sound in den letzten Sekunden',
     },
   };
 

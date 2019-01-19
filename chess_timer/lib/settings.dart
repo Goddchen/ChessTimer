@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chess_timer/blocs/bloc.dart';
 
 class SettingsWidget extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +41,16 @@ class SettingsWidget extends StatelessWidget {
         CheckboxPreference(
           AppLocalizations.of(context).get('settings_animate_last_seconds'),
           'animate_last_seconds',
+          defaultVal: true,
+        ),
+        CheckboxPreference(
+          AppLocalizations.of(context).get('settings_sound_last_seconds'),
+          'sound_last_seconds',
+          defaultVal: true,
+        ),
+        CheckboxPreference(
+          AppLocalizations.of(context).get('settings_sound_time_up'),
+          'sound_time_up',
           defaultVal: true,
         ),
       ]),

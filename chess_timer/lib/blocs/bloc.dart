@@ -6,6 +6,8 @@ import 'package:chess_timer/stats.dart';
 import 'dart:async';
 import 'package:vibrate/vibrate.dart';
 import 'package:chess_timer/blocs/bloc.dart';
+import 'package:soundpool/soundpool.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 export 'events.dart';
 export 'state.dart';
@@ -15,8 +17,15 @@ export 'package:bloc/bloc.dart';
 class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
   CountdownTimer _timer;
   StreamController _animationStreamController = StreamController();
+  Soundpool _soundpool = Soundpool(streamType: StreamType.music);
+  int _beepSoundId;
+  int _alarmSoundId;
 
   Stream<dynamic> get animationStream => _animationStreamController.stream;
+
+  ChessTimerBloc() {
+    _loadSounds();
+  }
 
   @override
   ChessTimerState get initialState {
@@ -93,6 +102,17 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
 
   void dispose() {
     _animationStreamController.close();
+    _soundpool.release();
+    _soundpool.dispose();
+  }
+
+  void _loadSounds() async {
+    _beepSoundId = await rootBundle
+        .load('assets/sound/beep.wav')
+        .then((data) => _soundpool.load(data));
+    _alarmSoundId = await rootBundle
+        .load('assets/sound/alarm.wav')
+        .then((data) => _soundpool.load(data));
   }
 
   void _setPlayerAtTurn(ChessTimerState state, int triggeringPlayer) {
@@ -124,10 +144,16 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
           if (PrefService.getBool('vibrate_last_seconds') ?? true) {
             Vibrate.feedback(FeedbackType.medium);
           }
+          if (PrefService.getBool('sound_last_seconds') ?? true) {
+            _soundpool.play(_beepSoundId);
+          }
         }
         if (timer.remaining.inSeconds == 0) {
           if (PrefService.getBool('vibrate_on_time_up') ?? true) {
             Vibrate.feedback(FeedbackType.error);
+          }
+          if (PrefService.getBool('sound_time_up') ?? true) {
+            _soundpool.play(_alarmSoundId);
           }
         }
       }
