@@ -5,6 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:chess_timer/stats.dart';
 import 'dart:async';
 import 'package:vibrate/vibrate.dart';
+import 'package:chess_timer/blocs/bloc.dart';
+
+export 'events.dart';
+export 'state.dart';
+export 'package:flutter_bloc/flutter_bloc.dart';
+export 'package:bloc/bloc.dart';
 
 class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
   CountdownTimer _timer;
@@ -18,7 +24,6 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
     state.turnTimeSeconds = PrefService.getInt('turn_time') ?? 20;
     state.playerTime = [0, state.turnTimeSeconds, state.turnTimeSeconds];
     state.playerAtTurn = 0;
-    state.playerScale = [0, 1, 1];
     state.turnCounter = [0, 0, 0];
     state.stopwatches = [Stopwatch(), Stopwatch(), Stopwatch()];
     return state;
@@ -130,48 +135,6 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
     state.stopwatches[state.playerAtTurn].start();
     state.turnCounter[state.playerAtTurn]++;
   }
-}
-
-class ChessTimerState {
-  int turnTimeSeconds;
-  int playerAtTurn;
-  List<int> playerTime;
-  List<double> playerScale;
-  List<int> turnCounter;
-  List<Stopwatch> stopwatches;
-
-  ChessTimerState clone() => ChessTimerState()
-    ..turnTimeSeconds = turnTimeSeconds
-    ..playerAtTurn = playerAtTurn
-    ..playerTime = List.from(playerTime)
-    ..playerScale = List.from(playerScale)
-    ..turnCounter = List.from(turnCounter)
-    ..stopwatches = List.from(stopwatches);
-}
-
-abstract class ChessTimerEvent {}
-
-class ResetEvent extends ChessTimerEvent {}
-
-class NewTurnTimeEvent extends ChessTimerEvent {
-  final int seconds;
-  NewTurnTimeEvent(this.seconds);
-}
-
-class PauseEvent extends ChessTimerEvent {}
-
-class ResumeEvent extends ChessTimerEvent {}
-
-class StopEvent extends ChessTimerEvent {
-  final BuildContext context;
-  StopEvent(this.context);
-}
-
-class TimerTickEvent extends ChessTimerEvent {}
-
-class PlayerStoppedEvent extends ChessTimerEvent {
-  final int triggeringPlayer;
-  PlayerStoppedEvent(this.triggeringPlayer);
 }
 
 class LogAllBlocDelegate extends BlocDelegate {
