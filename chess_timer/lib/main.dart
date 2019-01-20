@@ -10,6 +10,8 @@ import 'package:screen/screen.dart';
 import 'package:flutter/services.dart';
 import 'dart:async';
 import 'package:chess_timer/blocs/bloc.dart';
+import 'package:chess_timer/interfaces.dart';
+import 'package:soundpool/soundpool.dart';
 
 void main() async {
   await SystemChrome.setPreferredOrientations([
@@ -25,7 +27,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      bloc: ChessTimerBloc(),
+      bloc: ChessTimerBloc(PrefServiceImpl(),
+          Soundpool(streamType: StreamType.music), rootBundle, VibrateImpl()),
       child: MaterialApp(
         localizationsDelegates: [
           AppLocalizations.delegate,

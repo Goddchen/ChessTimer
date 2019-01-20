@@ -4,11 +4,6 @@ abstract class ChessTimerEvent {}
 
 class ResetEvent extends ChessTimerEvent {}
 
-class NewTurnTimeEvent extends ChessTimerEvent {
-  final int seconds;
-  NewTurnTimeEvent(this.seconds);
-}
-
 class PauseEvent extends ChessTimerEvent {}
 
 class ResumeEvent extends ChessTimerEvent {}

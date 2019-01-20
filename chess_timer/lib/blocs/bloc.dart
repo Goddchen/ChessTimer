@@ -1,13 +1,12 @@
 import 'package:bloc/bloc.dart';
 import 'package:quiver/async.dart';
-import 'package:preferences/preferences.dart';
 import 'package:flutter/material.dart';
 import 'package:chess_timer/stats.dart';
 import 'dart:async';
-import 'package:vibrate/vibrate.dart';
 import 'package:chess_timer/blocs/bloc.dart';
 import 'package:soundpool/soundpool.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
+import 'package:chess_timer/interfaces.dart';
 
 export 'events.dart';
 export 'state.dart';
@@ -17,20 +16,27 @@ export 'package:bloc/bloc.dart';
 class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
   CountdownTimer _timer;
   StreamController _animationStreamController = StreamController();
-  Soundpool _soundpool = Soundpool(streamType: StreamType.music);
+  Soundpool _soundpool;
   int _beepSoundId;
   int _alarmSoundId;
+  PrefServiceInterface _prefService;
+  AssetBundle _assetBundle;
+  VibrateInterface _vibrate;
 
   Stream<dynamic> get animationStream => _animationStreamController.stream;
 
-  ChessTimerBloc() {
+  ChessTimerBloc(PrefServiceInterface prefService, Soundpool soundpool, AssetBundle assetBundle, VibrateInterface vibrate)
+      : _soundpool = soundpool,
+        _prefService = prefService,
+        _assetBundle = assetBundle,
+        _vibrate = vibrate {
     _loadSounds();
   }
 
   @override
   ChessTimerState get initialState {
     ChessTimerState state = ChessTimerState();
-    state.turnTimeSeconds = PrefService.getInt('turn_time') ?? 20;
+    state.turnTimeSeconds = _prefService.getInt('turn_time') ?? 20;
     state.playerTime = [0, state.turnTimeSeconds, state.turnTimeSeconds];
     state.playerAtTurn = 0;
     state.turnCounter = [0, 0, 0];
@@ -45,7 +51,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
     if (event is ResetEvent) {
       _timer?.cancel();
       newState.playerAtTurn = 0;
-      newState.turnTimeSeconds = PrefService.getInt('turn_time') ?? 20;
+      newState.turnTimeSeconds = _prefService.getInt('turn_time') ?? 20;
       newState.playerTime = [
         0,
         newState.turnTimeSeconds,
@@ -56,13 +62,6 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         sw.reset();
         sw.stop();
       });
-    } else if (event is NewTurnTimeEvent) {
-      newState.turnTimeSeconds = event.seconds;
-      newState.playerTime = [
-        0,
-        newState.turnTimeSeconds,
-        newState.turnTimeSeconds
-      ];
     } else if (event is PauseEvent) {
       newState.stopwatches.forEach((sw) => sw.stop());
       if (_timer?.isRunning == true) {
@@ -104,13 +103,14 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
     _animationStreamController.close();
     _soundpool.release();
     _soundpool.dispose();
+    super.dispose();
   }
 
   void _loadSounds() async {
-    _beepSoundId = await rootBundle
+    _beepSoundId = await _assetBundle
         .load('assets/sound/beep.wav')
         .then((data) => _soundpool.load(data));
-    _alarmSoundId = await rootBundle
+    _alarmSoundId = await _assetBundle
         .load('assets/sound/alarm.wav')
         .then((data) => _soundpool.load(data));
   }
@@ -138,21 +138,21 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         dispatch(TimerTickEvent());
         if (timer.remaining.inMilliseconds > 0 &&
             timer.remaining.inSeconds < 5) {
-          if (PrefService.getBool('animate_last_seconds') ?? true) {
+          if (_prefService.getBool('animate_last_seconds') ?? true) {
             _animationStreamController.sink.add(null);
           }
-          if (PrefService.getBool('vibrate_last_seconds') ?? true) {
-            Vibrate.feedback(FeedbackType.medium);
+          if (_prefService.getBool('vibrate_last_seconds') ?? true) {
+            _vibrate.feedback(FeedbackType.medium);
           }
-          if (PrefService.getBool('sound_last_seconds') ?? true) {
+          if (_prefService.getBool('sound_last_seconds') ?? true) {
             _soundpool.play(_beepSoundId);
           }
         }
         if (timer.remaining.inSeconds == 0) {
-          if (PrefService.getBool('vibrate_on_time_up') ?? true) {
-            Vibrate.feedback(FeedbackType.error);
+          if (_prefService.getBool('vibrate_on_time_up') ?? true) {
+            _vibrate.feedback(FeedbackType.error);
           }
-          if (PrefService.getBool('sound_time_up') ?? true) {
+          if (_prefService.getBool('sound_time_up') ?? true) {
             _soundpool.play(_alarmSoundId);
           }
         }
