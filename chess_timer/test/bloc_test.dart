@@ -9,9 +9,19 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 
 void main() {
+  test('Test initial state', () {
+    var bloc = ChessTimerBloc(
+        PrefServiceMock(), SoundpoolMock(), AssetBundleMock(), VibrateMock());
+    expect(bloc.currentState.playerAtTurn, 0);
+    expect(bloc.currentState.playerTime, [0, 20, 20]);
+    bloc.currentState.stopwatches
+        .forEach((sw) => expect(sw.elapsed.inSeconds, 0));
+    expect(bloc.currentState.turnCounter, [0, 0, 0]);
+    expect(bloc.currentState.turnTimeSeconds, 20);
+  });
   test('Test player stopped events', () async {
-    var bloc =
-        ChessTimerBloc(PrefServiceMock(), SoundpoolMock(), AssetBundleMock(), VibrateMock());
+    var bloc = ChessTimerBloc(
+        PrefServiceMock(), SoundpoolMock(), AssetBundleMock(), VibrateMock());
     bloc.dispatch(PlayerStoppedEvent(1)); // player 1 starts game
     bloc.dispatch(
         PlayerStoppedEvent(1)); // player 1 stops his turn, player 2's turn
@@ -27,8 +37,8 @@ void main() {
     expect(states[4].playerAtTurn, 1);
   });
   test('Test reset event', () async {
-    var bloc =
-        ChessTimerBloc(PrefServiceMock(), SoundpoolMock(), AssetBundleMock(), VibrateMock());
+    var bloc = ChessTimerBloc(
+        PrefServiceMock(), SoundpoolMock(), AssetBundleMock(), VibrateMock());
     bloc.dispatch(PlayerStoppedEvent(1));
     bloc.dispatch(ResetEvent());
     List<ChessTimerState> states = await bloc.state.take(3).toList();
@@ -39,7 +49,8 @@ void main() {
 
   test('Test changing turn time', () async {
     var prefService = PrefServiceMock();
-    var bloc = ChessTimerBloc(prefService, SoundpoolMock(), AssetBundleMock(), VibrateMock());
+    var bloc = ChessTimerBloc(
+        prefService, SoundpoolMock(), AssetBundleMock(), VibrateMock());
     prefService.setInt('turn_time', 30);
     bloc.dispatch(ResetEvent());
     List<ChessTimerState> states = await bloc.state.take(2).toList();
@@ -50,7 +61,8 @@ void main() {
   test('Test timer ticks', () async {
     var prefService = PrefServiceMock();
     prefService.setInt('turn_time', 5);
-    var bloc = ChessTimerBloc(prefService, SoundpoolMock(), AssetBundleMock(), VibrateMock());
+    var bloc = ChessTimerBloc(
+        prefService, SoundpoolMock(), AssetBundleMock(), VibrateMock());
     bloc.dispatch(PlayerStoppedEvent(1));
     List<ChessTimerState> states = await bloc.state.take(7).toList();
     expect(states[0].playerTime[1], 5);
@@ -68,6 +80,38 @@ void main() {
     expect(states[4].playerTime[2], 5);
     expect(states[5].playerTime[2], 5);
     expect(states[6].playerTime[2], 5);
+  });
+
+  test('Test pause event', () async {
+    BlocSupervisor().delegate = LogAllBlocDelegate();
+    var bloc = ChessTimerBloc(
+        PrefServiceMock(), SoundpoolMock(), AssetBundleMock(), VibrateMock());
+    bloc.dispatch(PlayerStoppedEvent(1));
+    await Future.delayed(Duration(seconds: 3, milliseconds: 500));
+    bloc.dispatch(PauseEvent());
+    await Future.delayed(Duration(seconds: 3));
+    expect(bloc.currentState.playerTime[1], 17);
+    expect(
+        bloc.currentState.stopwatches
+            .map((sw) => sw.elapsed.inSeconds)
+            .reduce((a, b) => a + b),
+        3);
+  });
+
+  test('Test total time keeps running after turn time is up', () async {
+    BlocSupervisor().delegate = LogAllBlocDelegate();
+    var prefService = PrefServiceMock();
+    prefService.setInt('turn_time', 2);
+    var bloc = ChessTimerBloc(
+        prefService, SoundpoolMock(), AssetBundleMock(), VibrateMock());
+    bloc.dispatch(PlayerStoppedEvent(1));
+    await Future.delayed(Duration(seconds: 5));
+    expect(bloc.currentState.playerTime[1], 0);
+    expect(
+        bloc.currentState.stopwatches
+            .map((sw) => sw.elapsed.inSeconds)
+            .reduce((a, b) => a + b),
+        5);
   });
 }
 
