@@ -29,10 +29,10 @@ dependencies:
       ref: bugfix/on_change_notification
   shared_preferences: ^0.4.3
   vibrate: ^0.0.4
-  screen: ^0.0.4
+  screen: ^0.0.5
   flutter_launcher_icons: "^0.7.0"
-  flutter_bloc: ^0.5.1
-  soundpool: ^0.3.0
+  flutter_bloc: ^0.7.1
+  soundpool: ^0.4.1
 
 dev_dependencies:
   flutter_test:
