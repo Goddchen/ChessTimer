@@ -1,16 +1,23 @@
 import 'package:preferences/preferences.dart';
-import 'package:vibrate/vibrate.dart';
-
-export 'package:vibrate/vibrate.dart';
+import 'package:vibration/vibration.dart';
 
 abstract class VibrateInterface {
   void feedback(FeedbackType feedbackType);
 }
 
+enum FeedbackType { short, long }
+
 class VibrateImpl implements VibrateInterface {
   @override
   void feedback(FeedbackType feedbackType) {
-    Vibrate.feedback(feedbackType);
+    switch (feedbackType) {
+      case FeedbackType.short:
+        Vibration.vibrate(duration: 200);
+        break;
+      case FeedbackType.long:
+        Vibration.vibrate(duration: 1000);
+        break;
+    }
   }
 }
 

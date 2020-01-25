@@ -139,7 +139,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
             _animationStreamController.sink.add(null);
           }
           if (_prefService.getBool('vibrate_last_seconds') ?? true) {
-            _vibrate.feedback(FeedbackType.medium);
+            _vibrate.feedback(FeedbackType.short);
           }
           if (_prefService.getBool('sound_last_seconds') ?? true) {
             _soundpool.play(_beepSoundId);
@@ -147,7 +147,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         }
         if (timer.remaining.inSeconds == 0) {
           if (_prefService.getBool('vibrate_on_time_up') ?? true) {
-            _vibrate.feedback(FeedbackType.error);
+            _vibrate.feedback(FeedbackType.long);
           }
           if (_prefService.getBool('sound_time_up') ?? true) {
             _soundpool.play(_alarmSoundId);
