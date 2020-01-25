@@ -1,7 +1,8 @@
+import 'package:chess_timer/common/localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:preferences/preferences.dart';
-import 'package:chess_timer/localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:chess_timer/blocs/events.dart';
 import 'package:chess_timer/blocs/bloc.dart';
 
 class SettingsWidget extends StatelessWidget {
@@ -20,8 +21,8 @@ class SettingsWidget extends StatelessWidget {
             values: [10, 15, 20, 30, 45, 60],
             desc: AppLocalizations.of(context).get('settings_turn_time_desc'),
             displayValues: ['10', '15', '20', '30', '45', '60'],
-            onChange: (value) => BlocProvider.of<ChessTimerBloc>(context)
-                .dispatch(ResetEvent())),
+            onChange: (value) =>
+                BlocProvider.of<ChessTimerBloc>(context).add(ResetEvent())),
         PreferenceTitle(AppLocalizations.of(context).get('settings_feedback')),
         CheckboxPreference(
           AppLocalizations.of(context).get('settings_vibrate_on_end'),
