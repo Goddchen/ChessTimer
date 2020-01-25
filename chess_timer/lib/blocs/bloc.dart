@@ -77,6 +77,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
               playerOne: _playerOne, playerTwo: _playerTwo),
         ),
       );
+      initPlayers();
     } else if (event is TimerTickEvent) {
       Player activePlayer = getActivePlayer();
       if (activePlayer == null) {

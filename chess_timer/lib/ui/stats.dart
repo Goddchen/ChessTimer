@@ -91,6 +91,7 @@ class StatisticsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     int gameTimeSeconds =
         _playerOne.totalTimeSeconds + _playerTwo.totalTimeSeconds;
+    int totalTurns = _playerOne.numberOfTurns + _playerTwo.numberOfTurns;
 
     return SingleChildScrollView(
       child: Column(
@@ -110,19 +111,27 @@ class StatisticsWidget extends StatelessWidget {
             title: Text(
               AppLocalizations.of(context).get('turns'),
             ),
-            subtitle: Text('FIXME: ' + _playerOne.numberOfTurns.toString()),
+            subtitle: Text(totalTurns.toString()),
           ),
           Divider(),
           ListTile(
             title: Text(AppLocalizations.of(context).get('avg_turn')),
             subtitle: Text(
-              'FIXME' +
-                  NumberFormat('0.0').format(_playerOne.averageTurnSeconds) +
+              NumberFormat('0.0').format(
+                      getAverageTurnSeconds(gameTimeSeconds, totalTurns)) +
                   's',
             ),
           ),
         ],
       ),
     );
+  }
+
+  double getAverageTurnSeconds(gameTimeSeconds, totalTurns) {
+    if (totalTurns > 0) {
+      return gameTimeSeconds / totalTurns;
+    } else {
+      return 0;
+    }
   }
 }
