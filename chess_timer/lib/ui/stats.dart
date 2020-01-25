@@ -1,18 +1,16 @@
+import 'package:chess_timer/common/localizations.dart';
+import 'package:chess_timer/model/player.dart';
 import 'package:flutter/material.dart';
-import 'package:chess_timer/localizations.dart';
 import 'dart:math';
 import 'package:intl/intl.dart';
 
 class StatisticsScreenWidget extends StatelessWidget {
-  final int _totalTimeSeconds;
-  final List<int> _playerTurnCount;
-  final List<Stopwatch> _stopwatches;
+  final Player _playerOne;
+  final Player _playerTwo;
 
-  StatisticsScreenWidget(int totalTimeSeconds, List<int> playerTurnCount,
-      List<Stopwatch> stopwatches)
-      : _totalTimeSeconds = totalTimeSeconds,
-        _playerTurnCount = playerTurnCount,
-        _stopwatches = stopwatches;
+  StatisticsScreenWidget({playerOne, playerTwo})
+      : _playerOne = playerOne,
+        _playerTwo = playerTwo;
 
   @override
   Widget build(BuildContext context) => Material(
@@ -22,7 +20,9 @@ class StatisticsScreenWidget extends StatelessWidget {
               child: Transform.rotate(
                 angle: pi,
                 child: StatisticsWidget(
-                    _totalTimeSeconds, _playerTurnCount, _stopwatches),
+                  playerOne: _playerOne,
+                  playerTwo: _playerTwo,
+                ),
               ),
             ),
             Container(
@@ -70,7 +70,9 @@ class StatisticsScreenWidget extends StatelessWidget {
             ),
             Expanded(
               child: StatisticsWidget(
-                  _totalTimeSeconds, _playerTurnCount, _stopwatches),
+                playerOne: _playerOne,
+                playerTwo: _playerTwo,
+              ),
             ),
           ],
         ),
@@ -78,20 +80,18 @@ class StatisticsScreenWidget extends StatelessWidget {
 }
 
 class StatisticsWidget extends StatelessWidget {
-  final int _totalTimeSeconds;
-  final List<int> _playerTurnCount;
-  final List<Stopwatch> _stopwatches;
+  final Player _playerOne;
+  final Player _playerTwo;
 
-  StatisticsWidget(int totalTimeSeconds, List<int> playerTurnCount,
-      List<Stopwatch> stopwatches)
-      : _totalTimeSeconds = totalTimeSeconds,
-        _playerTurnCount = playerTurnCount,
-        _stopwatches = stopwatches;
+  StatisticsWidget({playerOne, playerTwo})
+      : _playerOne = playerOne,
+        _playerTwo = playerTwo;
+
   @override
   Widget build(BuildContext context) {
-    int playerTurnsSeconds =
-        _stopwatches.map((sw) => sw.elapsed.inSeconds).reduce((a, b) => a + b);
-    int turnCount = _playerTurnCount.reduce((a, b) => a + b);
+    int gameTimeSeconds =
+        _playerOne.totalTimeSeconds + _playerTwo.totalTimeSeconds;
+
     return SingleChildScrollView(
       child: Column(
         children: <Widget>[
@@ -100,9 +100,9 @@ class StatisticsWidget extends StatelessWidget {
               AppLocalizations.of(context).get('total_time'),
             ),
             subtitle: Text(
-              NumberFormat('00').format((_totalTimeSeconds / 60).floor()) +
+              NumberFormat('00').format((gameTimeSeconds / 60).floor()) +
                   ':' +
-                  NumberFormat('00').format(_totalTimeSeconds % 60),
+                  NumberFormat('00').format(gameTimeSeconds % 60),
             ),
           ),
           Divider(),
@@ -110,14 +110,14 @@ class StatisticsWidget extends StatelessWidget {
             title: Text(
               AppLocalizations.of(context).get('turns'),
             ),
-            subtitle: Text(_playerTurnCount.reduce((a, b) => a + b).toString()),
+            subtitle: Text('FIXME: ' + _playerOne.numberOfTurns.toString()),
           ),
           Divider(),
           ListTile(
             title: Text(AppLocalizations.of(context).get('avg_turn')),
             subtitle: Text(
-              NumberFormat('0.0').format(
-                      turnCount == 0 ? 0 : (playerTurnsSeconds / turnCount)) +
+              'FIXME' +
+                  NumberFormat('0.0').format(_playerOne.averageTurnSeconds) +
                   's',
             ),
           ),

@@ -1,24 +1,15 @@
 import 'dart:convert';
+import 'package:chess_timer/model/player.dart';
 
 class ChessTimerState {
-  int turnTimeSeconds;
-  int playerAtTurn;
-  List<int> playerTime;
-  List<int> turnCounter;
-  List<Stopwatch> stopwatches;
+  final Player playerOne;
+  final Player playerTwo;
 
-  ChessTimerState clone() => ChessTimerState()
-    ..turnTimeSeconds = turnTimeSeconds
-    ..playerAtTurn = playerAtTurn
-    ..playerTime = List.from(playerTime)
-    ..turnCounter = List.from(turnCounter)
-    ..stopwatches = List.from(stopwatches);
+  ChessTimerState({this.playerOne, this.playerTwo});
 
   @override
   String toString() => jsonEncode({
-        'turnTimeSeconds': turnTimeSeconds,
-        'playerAtTurn': playerAtTurn,
-        'playerTime': playerTime,
-        'turnCounter': turnCounter,
+        'playerOne': playerOne,
+        'playerTwo': playerTwo,
       });
 }

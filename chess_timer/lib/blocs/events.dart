@@ -1,3 +1,4 @@
+import 'package:chess_timer/model/player.dart';
 import 'package:flutter/material.dart';
 
 abstract class ChessTimerEvent {}
@@ -16,6 +17,6 @@ class StopEvent extends ChessTimerEvent {
 class TimerTickEvent extends ChessTimerEvent {}
 
 class PlayerStoppedEvent extends ChessTimerEvent {
-  final int triggeringPlayer;
+  final PLAYER_ID triggeringPlayer;
   PlayerStoppedEvent(this.triggeringPlayer);
 }

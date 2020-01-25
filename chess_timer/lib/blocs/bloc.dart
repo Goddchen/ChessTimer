@@ -1,17 +1,14 @@
-import 'package:bloc/bloc.dart';
-import 'package:quiver/async.dart';
-import 'package:flutter/material.dart';
-import 'package:chess_timer/stats.dart';
 import 'dart:async';
-import 'package:chess_timer/blocs/bloc.dart';
-import 'package:soundpool/soundpool.dart';
+import 'package:chess_timer/common/interfaces.dart';
+import 'package:chess_timer/model/player.dart';
+import 'package:chess_timer/ui/stats.dart';
+import 'package:flutter/material.dart';
+import 'package:quiver/async.dart';
+import 'package:chess_timer/blocs/events.dart';
+import 'package:chess_timer/blocs/state.dart';
 import 'package:flutter/services.dart';
-import 'package:chess_timer/interfaces.dart';
-
-export 'events.dart';
-export 'state.dart';
-export 'package:flutter_bloc/flutter_bloc.dart';
-export 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:soundpool/soundpool.dart';
 
 class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
   CountdownTimer _timer;
@@ -25,7 +22,13 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
 
   Stream<dynamic> get animationStream => _animationStreamController.stream;
 
-  ChessTimerBloc(PrefServiceInterface prefService, Soundpool soundpool, AssetBundle assetBundle, VibrateInterface vibrate)
+  PLAYER_ID activePlayerID;
+  Player _playerOne;
+  Player _playerTwo;
+  List<int> turnCounter = [0, 0, 0];
+
+  ChessTimerBloc(PrefServiceInterface prefService, Soundpool soundpool,
+      AssetBundle assetBundle, VibrateInterface vibrate)
       : _soundpool = soundpool,
         _prefService = prefService,
         _assetBundle = assetBundle,
@@ -35,75 +38,87 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
 
   @override
   ChessTimerState get initialState {
-    ChessTimerState state = ChessTimerState();
-    state.turnTimeSeconds = _prefService.getInt('turn_time') ?? 20;
-    state.playerTime = [0, state.turnTimeSeconds, state.turnTimeSeconds];
-    state.playerAtTurn = 0;
-    state.turnCounter = [0, 0, 0];
-    state.stopwatches = [Stopwatch(), Stopwatch(), Stopwatch()];
-    return state;
+    _playerOne =
+        Player(startTimeSeconds: getTurnTimeSeconds(), id: PLAYER_ID.ONE);
+    _playerTwo =
+        Player(startTimeSeconds: getTurnTimeSeconds(), id: PLAYER_ID.TWO);
+    return getCurrentState();
   }
 
   @override
-  Stream<ChessTimerState> mapEventToState(
-      ChessTimerState currentState, ChessTimerEvent event) async* {
-    ChessTimerState newState = currentState.clone();
+  Stream<ChessTimerState> mapEventToState(ChessTimerEvent event) async* {
     if (event is ResetEvent) {
       _timer?.cancel();
-      newState.playerAtTurn = 0;
-      newState.turnTimeSeconds = _prefService.getInt('turn_time') ?? 20;
-      newState.playerTime = [
-        0,
-        newState.turnTimeSeconds,
-        newState.turnTimeSeconds
-      ];
-      newState.turnCounter = [0, 0, 0];
-      newState.stopwatches.forEach((sw) {
-        sw.reset();
-        sw.stop();
-      });
+      _playerOne.resetTimer();
+      _playerTwo.resetTimer();
+      yield getCurrentState();
     } else if (event is PauseEvent) {
-      newState.stopwatches.forEach((sw) => sw.stop());
+      _playerOne.stopTimer();
+      _playerTwo.stopTimer();
       if (_timer?.isRunning == true) {
         _timer.cancel();
       }
     } else if (event is ResumeEvent) {
-      newState.stopwatches[newState.playerAtTurn].start();
+      Player aP = getActivePlayer();
+      if (aP == null) {
+        return;
+      }
+      aP.startTimer();
+
       if (_timer?.isRunning == false) {
-        _startTimerForCurrentPlayer(newState);
+        _startTimerForCurrentPlayer(aP);
       }
     } else if (event is StopEvent) {
-      newState.stopwatches.forEach((sw) => sw.stop());
+      _playerOne.stopTimer();
+      _playerTwo.stopTimer();
       if (_timer?.isRunning == true) {
         _timer.cancel();
       }
       Navigator.push(
-          event.context,
-          MaterialPageRoute(
-              builder: (context) => StatisticsScreenWidget(
-                  newState.stopwatches
-                      .map((sw) => sw.elapsed.inSeconds)
-                      .reduce((a, b) => a + b),
-                  newState.turnCounter,
-                  newState.stopwatches)));
+        event.context,
+        MaterialPageRoute(
+          builder: (context) => StatisticsScreenWidget(
+              playerOne: _playerOne, playerTwo: _playerTwo),
+        ),
+      );
     } else if (event is TimerTickEvent) {
-      newState.playerTime[newState.playerAtTurn] = _timer.remaining.inSeconds;
-    } else if (event is PlayerStoppedEvent) {
-      if (newState.playerAtTurn == event.triggeringPlayer ||
-          newState.playerAtTurn == 0) {
-        newState.stopwatches[newState.playerAtTurn].stop();
-        _setPlayerAtTurn(newState, event.triggeringPlayer);
-        _startTimerForCurrentPlayer(newState);
+      Player aP = getActivePlayer();
+      if (aP == null) {
+        return;
       }
+      aP.turnTimeLeft = _timer.remaining.inSeconds;
+    } else if (event is PlayerStoppedEvent) {
+      if (activePlayerID != event.triggeringPlayer) {
+        return;
+      }
+      Player aP = getActivePlayer();
+      aP?.stopTimer();
+      if (aP == null) {
+        activePlayerID = event.triggeringPlayer;
+        _playerOne.reset();
+        _playerTwo.reset();
+      } else {
+        aP.turnTimeLeft += getTurnTimeSeconds();
+        activePlayerID = event.triggeringPlayer == PLAYER_ID.ONE
+            ? PLAYER_ID.TWO
+            : PLAYER_ID.ONE;
+      }
+      _startTimerForCurrentPlayer(getActivePlayer());
     }
-    yield newState;
+    yield getCurrentState();
+  }
+
+  ChessTimerState getCurrentState() {
+    return ChessTimerState(
+      playerOne: _playerOne,
+      playerTwo: _playerTwo,
+    );
   }
 
   void dispose() {
     _animationStreamController.close();
     _soundpool.release();
     _soundpool.dispose();
-    super.dispose();
   }
 
   void _loadSounds() async {
@@ -115,27 +130,15 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         .then((data) => _soundpool.load(data));
   }
 
-  void _setPlayerAtTurn(ChessTimerState state, int triggeringPlayer) {
-    if (state.playerAtTurn == 0) {
-      state.playerAtTurn = triggeringPlayer;
-      state.turnCounter = [0, 0, 0];
-      state.stopwatches.forEach((sw) => sw.reset());
-    } else {
-      state.playerTime[state.playerAtTurn] += state.turnTimeSeconds;
-      state.playerAtTurn = triggeringPlayer == 1 ? 2 : 1;
-    }
-  }
-
-  void _startTimerForCurrentPlayer(ChessTimerState state) {
+  void _startTimerForCurrentPlayer(Player aP) {
     _timer?.cancel();
     _timer = CountdownTimer(
-      Duration(
-          seconds: state.playerTime[state.playerAtTurn], milliseconds: 500),
+      Duration(seconds: aP.turnTimeLeft, milliseconds: 500),
       Duration(seconds: 1),
     );
     _timer.listen((timer) {
       if (!timer.remaining.isNegative) {
-        dispatch(TimerTickEvent());
+        add(TimerTickEvent());
         if (timer.remaining.inMilliseconds > 0 &&
             timer.remaining.inSeconds < 5) {
           if (_prefService.getBool('animate_last_seconds') ?? true) {
@@ -158,14 +161,40 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         }
       }
     });
-    state.stopwatches[state.playerAtTurn].start();
-    state.turnCounter[state.playerAtTurn]++;
+    aP.startTimer();
+    aP.numberOfTurns++;
+  }
+
+  Player getActivePlayer() {
+    if (activePlayerID == PLAYER_ID.ONE) {
+      return _playerOne;
+    } else if (activePlayerID == PLAYER_ID.TWO) {
+      return _playerTwo;
+    }
+    return null;
+  }
+
+  int getTurnTimeSeconds() {
+    return _prefService.getInt('turn_time') ?? 20;
   }
 }
 
 class LogAllBlocDelegate extends BlocDelegate {
   @override
-  void onTransition(Transition transition) {
-    debugPrint("State transition: $transition");
+  void onEvent(Bloc bloc, Object event) {
+    super.onEvent(bloc, event);
+    debugPrint("Bloc-Event: $event");
+  }
+
+  @override
+  void onTransition(Bloc bloc, Transition transition) {
+    super.onTransition(bloc, transition);
+    debugPrint("Bloc-Transition: $transition");
+  }
+
+  @override
+  void onError(Bloc bloc, Object error, StackTrace stacktrace) {
+    super.onError(bloc, error, stacktrace);
+    debugPrint("Bloc-Error: $error");
   }
 }
