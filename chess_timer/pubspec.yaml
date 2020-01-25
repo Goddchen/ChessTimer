@@ -36,7 +36,7 @@ dev_dependencies:
   test: ^1.5.1
 
 flutter_icons:
-  image_path: "../Assets/app-icon.png"
+  image_path: "../Assets/ic_launcher.png"
   android: true
   ios: true
 
