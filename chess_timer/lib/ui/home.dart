@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:math';
 import 'package:chess_timer/blocs/bloc.dart';
 import 'package:chess_timer/blocs/state.dart';
+import 'package:chess_timer/common/app_colors.dart';
 import 'package:chess_timer/model/player.dart';
 import 'package:chess_timer/ui/players_area.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:wakelock/wakelock.dart';
 import 'middle_area.dart';
@@ -65,7 +67,13 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
-  Widget build(BuildContext context) => SafeArea(
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarBrightness: Brightness.light,
+    ));
+    return Container(
+      color: AppColors.homeBackground,
+      child: SafeArea(
         child: Material(
           child: Container(
             child: BlocBuilder<ChessTimerBloc, ChessTimerState>(
@@ -92,19 +100,24 @@ class _HomePageState extends State<HomePage>
             }),
           ),
         ),
-      );
+      ),
+    );
+  }
 
   Widget buildPlayersArea({Player player, int gameTimeSeconds}) {
     return Expanded(
-      child: Transform.rotate(
-        angle: player.id == PLAYER_ID.TWO ? 0 : pi,
-        child: Container(
-          margin: EdgeInsets.all(8),
-          child: Transform.scale(
-            scale: player.timerIsRunning ? _playerScale : 1,
-            child: PlayersArea(
-              player: player,
-              gameTimeSeconds: gameTimeSeconds,
+      child: Container(
+        color: AppColors.homeBackground,
+        child: Transform.rotate(
+          angle: player.id == PLAYER_ID.TWO ? 0 : pi,
+          child: Container(
+            margin: EdgeInsets.all(8),
+            child: Transform.scale(
+              scale: player.timerIsRunning ? _playerScale : 1,
+              child: PlayersArea(
+                player: player,
+                gameTimeSeconds: gameTimeSeconds,
+              ),
             ),
           ),
         ),
