@@ -76,8 +76,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
           builder: (context) => StatisticsScreenWidget(
               playerOne: _playerOne, playerTwo: _playerTwo),
         ),
-      );
-      initPlayers();
+      ).then((_) => initPlayers());
     } else if (event is TimerTickEvent) {
       Player activePlayer = getActivePlayer();
       if (activePlayer == null) {

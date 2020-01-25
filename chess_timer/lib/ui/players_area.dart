@@ -1,5 +1,6 @@
 import 'package:chess_timer/blocs/bloc.dart';
 import 'package:chess_timer/blocs/events.dart';
+import 'package:chess_timer/common/app_colors.dart';
 import 'package:chess_timer/common/localizations.dart';
 import 'package:chess_timer/model/player.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,9 @@ class PlayersArea extends StatelessWidget {
       child: RaisedButton(
         padding: EdgeInsets.all(8),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        color: _player.timerIsRunning ? Colors.green[300] : Colors.grey[400],
+        color: _player.timerIsRunning
+            ? AppColors.player_area_active
+            : AppColors.player_area_inactive,
         onPressed: () => BlocProvider.of<ChessTimerBloc>(context)
             .add(PlayerStoppedEvent(_player.id)),
         child: Stack(
