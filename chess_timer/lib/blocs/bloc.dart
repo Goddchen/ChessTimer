@@ -46,6 +46,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
     if (event is ResetEvent) {
       _timer?.cancel();
       initPlayers();
+      activePlayerID = null;
     } else if (event is PauseEvent) {
       _playerOne.stopTimer();
       _playerTwo.stopTimer();
