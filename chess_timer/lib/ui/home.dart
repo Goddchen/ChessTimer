@@ -6,6 +6,7 @@ import 'package:chess_timer/common/app_colors.dart';
 import 'package:chess_timer/model/player.dart';
 import 'package:chess_timer/ui/players_area.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:screen/screen.dart';
 import 'middle_area.dart';
@@ -66,37 +67,42 @@ class _HomePageState extends State<HomePage>
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-        color: AppColors.homeBackground,
-        child: SafeArea(
-          child: Material(
-            child: Container(
-              child: BlocBuilder<ChessTimerBloc, ChessTimerState>(
-                  builder: (context, state) {
-                int gameTimeSeconds = state.playerOne.totalTimeSeconds +
-                    state.playerTwo.totalTimeSeconds;
-                return Column(
-                  children: <Widget>[
-                    buildPlayersArea(
-                      player: state.playerOne,
-                      gameTimeSeconds: gameTimeSeconds,
-                    ),
-                    MiddleArea(
-                      bloc: BlocProvider.of<ChessTimerBloc>(context),
-                      isRunning: state.playerOne.timerIsRunning ||
-                          state.playerTwo.timerIsRunning,
-                    ),
-                    buildPlayersArea(
-                      player: state.playerTwo,
-                      gameTimeSeconds: gameTimeSeconds,
-                    ),
-                  ],
-                );
-              }),
-            ),
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarBrightness: Brightness.light,
+    ));
+    return Container(
+      color: AppColors.homeBackground,
+      child: SafeArea(
+        child: Material(
+          child: Container(
+            child: BlocBuilder<ChessTimerBloc, ChessTimerState>(
+                builder: (context, state) {
+              int gameTimeSeconds = state.playerOne.totalTimeSeconds +
+                  state.playerTwo.totalTimeSeconds;
+              return Column(
+                children: <Widget>[
+                  buildPlayersArea(
+                    player: state.playerOne,
+                    gameTimeSeconds: gameTimeSeconds,
+                  ),
+                  MiddleArea(
+                    bloc: BlocProvider.of<ChessTimerBloc>(context),
+                    isRunning: state.playerOne.timerIsRunning ||
+                        state.playerTwo.timerIsRunning,
+                  ),
+                  buildPlayersArea(
+                    player: state.playerTwo,
+                    gameTimeSeconds: gameTimeSeconds,
+                  ),
+                ],
+              );
+            }),
           ),
         ),
-      );
+      ),
+    );
+  }
 
   Widget buildPlayersArea({Player player, int gameTimeSeconds}) {
     return Expanded(
