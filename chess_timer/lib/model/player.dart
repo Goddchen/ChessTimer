@@ -22,11 +22,6 @@ class Player {
     _stopwatch.stop();
   }
 
-  void resetTimer() {
-    _stopwatch.stop();
-    _stopwatch.reset();
-  }
-
   int get totalTimeSeconds {
     return _stopwatch.elapsed.inSeconds + _stopwatchOffset;
   }
@@ -41,11 +36,6 @@ class Player {
     } else {
       return totalTimeSeconds / numberOfTurns;
     }
-  }
-
-  void reset() {
-    numberOfTurns = 0;
-    resetTimer();
   }
 
   @override

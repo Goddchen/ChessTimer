@@ -25,7 +25,6 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
   PLAYER_ID activePlayerID;
   Player _playerOne;
   Player _playerTwo;
-  List<int> turnCounter = [0, 0, 0];
 
   ChessTimerBloc(PrefServiceInterface prefService, Soundpool soundpool,
       AssetBundle assetBundle, VibrateInterface vibrate)
@@ -38,8 +37,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
 
   @override
   ChessTimerState get initialState {
-    _playerOne = Player(turnTimeLeft: getTurnTimeSeconds(), id: PLAYER_ID.ONE);
-    _playerTwo = Player(turnTimeLeft: getTurnTimeSeconds(), id: PLAYER_ID.TWO);
+    initPlayers();
     return getCurrentState();
   }
 
@@ -47,8 +45,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
   Stream<ChessTimerState> mapEventToState(ChessTimerEvent event) async* {
     if (event is ResetEvent) {
       _timer?.cancel();
-      _playerOne.resetTimer();
-      _playerTwo.resetTimer();
+      initPlayers();
     } else if (event is PauseEvent) {
       _playerOne.stopTimer();
       _playerTwo.stopTimer();
@@ -92,9 +89,8 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
       Player activePlayer = getActivePlayer();
       activePlayer?.stopTimer();
       if (activePlayer == null) {
+        initPlayers();
         activePlayerID = event.triggeringPlayer;
-        _playerOne.reset();
-        _playerTwo.reset();
       } else {
         activePlayer.turnTimeLeft += getTurnTimeSeconds();
         activePlayerID = event.triggeringPlayer == PLAYER_ID.ONE
@@ -170,6 +166,11 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
       return _playerTwo;
     }
     return null;
+  }
+
+  void initPlayers() {
+    _playerOne = Player(turnTimeLeft: getTurnTimeSeconds(), id: PLAYER_ID.ONE);
+    _playerTwo = Player(turnTimeLeft: getTurnTimeSeconds(), id: PLAYER_ID.TWO);
   }
 
   int getTurnTimeSeconds() {
