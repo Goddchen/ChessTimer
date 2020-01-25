@@ -77,6 +77,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
               playerOne: _playerOne, playerTwo: _playerTwo),
         ),
       );
+      initPlayers();
     } else if (event is TimerTickEvent) {
       Player activePlayer = getActivePlayer();
       if (activePlayer == null) {
@@ -90,7 +91,6 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
       Player activePlayer = getActivePlayer();
       activePlayer?.stopTimer();
       if (activePlayer == null) {
-        initPlayers();
         activePlayerID = event.triggeringPlayer;
       } else {
         activePlayer.turnTimeLeft += getTurnTimeSeconds();
