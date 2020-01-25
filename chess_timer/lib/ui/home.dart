@@ -6,7 +6,7 @@ import 'package:chess_timer/model/player.dart';
 import 'package:chess_timer/ui/players_area.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:screen/screen.dart';
+import 'package:wakelock/wakelock.dart';
 import 'middle_area.dart';
 
 class HomePage extends StatefulWidget {
@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage>
   void initState() {
     super.initState();
     _initAnimations();
-    Screen.keepOn(true);
+    Wakelock.enable();
   }
 
   @override
@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage>
     animationController.dispose();
     _animationSubscription?.cancel();
     BlocProvider.of<ChessTimerBloc>(context).dispose();
-    Screen.keepOn(false);
+    Wakelock.disable();
     super.dispose();
   }
 
