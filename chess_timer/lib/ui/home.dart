@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:chess_timer/blocs/bloc.dart';
-import 'package:chess_timer/blocs/events.dart';
 import 'package:chess_timer/blocs/state.dart';
 import 'package:chess_timer/model/player.dart';
 import 'package:chess_timer/ui/players_area.dart';
@@ -19,7 +18,7 @@ class _HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   Animation<double> animation;
   AnimationController animationController;
-  double _playerScale;
+  double _playerScale = 1;
 
   StreamSubscription _animationSubscription;
 
