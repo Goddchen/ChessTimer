@@ -20,7 +20,9 @@ addons:
       - libstdc++6
       - fonts-droid
 before_script:
-  - git clone https://github.com/flutter/flutter.git -b beta
+  - git clone https://github.com/flutter/flutter.git
+  - ./flutter/bin/flutter channel master
+  - ./flutter/bin/flutter upgrade
   - ./flutter/bin/flutter doctor
 script:
   - cd chess_timer
