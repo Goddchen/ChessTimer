@@ -52,7 +52,7 @@ class StatisticsScreenWidget extends StatelessWidget {
                           AppLocalizations.of(context).get('statistics'),
                           style: Theme.of(context)
                               .textTheme
-                              .title
+                              .headline6
                               .apply(color: Colors.white),
                         ),
                       ),
@@ -60,7 +60,7 @@ class StatisticsScreenWidget extends StatelessWidget {
                         AppLocalizations.of(context).get('statistics'),
                         style: Theme.of(context)
                             .textTheme
-                            .title
+                            .headline6
                             .apply(color: Colors.white),
                       ),
                     ],
