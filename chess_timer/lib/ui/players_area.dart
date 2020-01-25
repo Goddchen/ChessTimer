@@ -12,12 +12,10 @@ class PlayersArea extends StatelessWidget {
   final int _gameTimeSeconds;
 
   const PlayersArea({
-    Key key,
     Player player,
     int gameTimeSeconds,
   })  : _player = player,
-        _gameTimeSeconds = gameTimeSeconds,
-        super(key: key);
+        _gameTimeSeconds = gameTimeSeconds;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +32,7 @@ class PlayersArea extends StatelessWidget {
             Align(
               alignment: Alignment.center,
               child: Text(
-                '${NumberFormat('00').format(((_player.turnTimeLeft ?? 10) / 60).floor())}:${NumberFormat('00').format(((_player.turnTimeLeft ?? 10) % 60))}',
+                playerLeftTime(),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 64,
@@ -46,7 +44,7 @@ class PlayersArea extends StatelessWidget {
               child: Transform.rotate(
                 angle: pi,
                 child: Text(
-                  '${NumberFormat('00').format(((_player.turnTimeLeft ?? 10) / 60).floor())}:${NumberFormat('00').format(((_player.turnTimeLeft ?? 10) % 60))}',
+                  playerLeftTime(),
                   style: TextStyle(
                     fontSize: 24,
                   ),
@@ -68,5 +66,15 @@ class PlayersArea extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String playerLeftTime() {
+    int minutesLeft = ((_player.turnTimeLeft ?? 10) / 60).floor();
+    int secondsLeft = ((_player.turnTimeLeft ?? 10) % 60);
+    return '${_formatTimeLeft(minutesLeft)}:${_formatTimeLeft(secondsLeft)}';
+  }
+
+  String _formatTimeLeft(int timeLeft) {
+    return NumberFormat('00').format(timeLeft);
   }
 }

@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage>
   Widget buildPlayersArea({Player player, int gameTimeSeconds}) {
     return Expanded(
       child: Transform.rotate(
-        angle: player.id == PLAYER_ID.ONE ? 0 : pi,
+        angle: player.id == PLAYER_ID.TWO ? 0 : pi,
         child: Container(
           margin: EdgeInsets.all(8),
           child: Transform.scale(

@@ -38,10 +38,8 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
 
   @override
   ChessTimerState get initialState {
-    _playerOne =
-        Player(startTimeSeconds: getTurnTimeSeconds(), id: PLAYER_ID.ONE);
-    _playerTwo =
-        Player(startTimeSeconds: getTurnTimeSeconds(), id: PLAYER_ID.TWO);
+    _playerOne = Player(turnTimeLeft: getTurnTimeSeconds(), id: PLAYER_ID.ONE);
+    _playerTwo = Player(turnTimeLeft: getTurnTimeSeconds(), id: PLAYER_ID.TWO);
     return getCurrentState();
   }
 
@@ -51,7 +49,6 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
       _timer?.cancel();
       _playerOne.resetTimer();
       _playerTwo.resetTimer();
-      yield getCurrentState();
     } else if (event is PauseEvent) {
       _playerOne.stopTimer();
       _playerTwo.stopTimer();
@@ -59,16 +56,17 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         _timer.cancel();
       }
     } else if (event is ResumeEvent) {
-      Player aP = getActivePlayer();
-      if (aP == null) {
+      Player activePlayer = getActivePlayer();
+      if (activePlayer == null) {
         return;
       }
-      aP.startTimer();
+      activePlayer.startTimer();
 
       if (_timer?.isRunning == false) {
-        _startTimerForCurrentPlayer(aP);
+        _startTimerForCurrentPlayer(activePlayer);
       }
     } else if (event is StopEvent) {
+      activePlayerID = null;
       _playerOne.stopTimer();
       _playerTwo.stopTimer();
       if (_timer?.isRunning == true) {
@@ -82,23 +80,23 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         ),
       );
     } else if (event is TimerTickEvent) {
-      Player aP = getActivePlayer();
-      if (aP == null) {
+      Player activePlayer = getActivePlayer();
+      if (activePlayer == null) {
         return;
       }
-      aP.turnTimeLeft = _timer.remaining.inSeconds;
+      activePlayer.turnTimeLeft = _timer.remaining.inSeconds;
     } else if (event is PlayerStoppedEvent) {
-      if (activePlayerID != event.triggeringPlayer) {
+      if (activePlayerID != event.triggeringPlayer && activePlayerID != null) {
         return;
       }
-      Player aP = getActivePlayer();
-      aP?.stopTimer();
-      if (aP == null) {
+      Player activePlayer = getActivePlayer();
+      activePlayer?.stopTimer();
+      if (activePlayer == null) {
         activePlayerID = event.triggeringPlayer;
         _playerOne.reset();
         _playerTwo.reset();
       } else {
-        aP.turnTimeLeft += getTurnTimeSeconds();
+        activePlayer.turnTimeLeft += getTurnTimeSeconds();
         activePlayerID = event.triggeringPlayer == PLAYER_ID.ONE
             ? PLAYER_ID.TWO
             : PLAYER_ID.ONE;
@@ -130,10 +128,10 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         .then((data) => _soundpool.load(data));
   }
 
-  void _startTimerForCurrentPlayer(Player aP) {
+  void _startTimerForCurrentPlayer(Player activePlayer) {
     _timer?.cancel();
     _timer = CountdownTimer(
-      Duration(seconds: aP.turnTimeLeft, milliseconds: 500),
+      Duration(seconds: activePlayer.turnTimeLeft, milliseconds: 500),
       Duration(seconds: 1),
     );
     _timer.listen((timer) {
@@ -161,8 +159,8 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         }
       }
     });
-    aP.startTimer();
-    aP.numberOfTurns++;
+    activePlayer.startTimer();
+    activePlayer.numberOfTurns++;
   }
 
   Player getActivePlayer() {
