@@ -1,5 +1,6 @@
 import 'package:chess_timer/blocs/bloc.dart';
 import 'package:chess_timer/blocs/events.dart';
+import 'package:chess_timer/blocs/state.dart';
 import 'package:chess_timer/common/app_colors.dart';
 import 'package:chess_timer/common/localizations.dart';
 import 'package:chess_timer/model/player.dart';
@@ -9,11 +10,11 @@ import 'package:intl/intl.dart';
 import 'dart:math';
 
 class PlayersArea extends StatelessWidget {
-  final Player _player;
+  final PlayerState _player;
   final int _gameTimeSeconds;
 
   const PlayersArea({
-    Player player,
+    PlayerState player,
     int gameTimeSeconds,
   })  : _player = player,
         _gameTimeSeconds = gameTimeSeconds;

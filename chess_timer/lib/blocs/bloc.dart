@@ -79,33 +79,43 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
       ).then((_) => initPlayers());
     } else if (event is TimerTickEvent) {
       Player activePlayer = getActivePlayer();
-      if (activePlayer == null) {
-        return;
+      if (activePlayer != null) {
+        activePlayer.turnTimeLeft = _timer.remaining.inSeconds;
       }
-      activePlayer.turnTimeLeft = _timer.remaining.inSeconds;
     } else if (event is PlayerStoppedEvent) {
-      if (activePlayerID != event.triggeringPlayer && activePlayerID != null) {
-        return;
+      if (activePlayerID == event.triggeringPlayer || activePlayerID == null) {
+        Player activePlayer = getActivePlayer();
+        activePlayer?.stopTimer();
+        if (activePlayer == null) {
+          activePlayerID = event.triggeringPlayer;
+        } else {
+          activePlayer.turnTimeLeft += getTurnTimeSeconds();
+          activePlayerID = event.triggeringPlayer == PLAYER_ID.ONE
+              ? PLAYER_ID.TWO
+              : PLAYER_ID.ONE;
+        }
+        _startTimerForCurrentPlayer(getActivePlayer());
       }
-      Player activePlayer = getActivePlayer();
-      activePlayer?.stopTimer();
-      if (activePlayer == null) {
-        activePlayerID = event.triggeringPlayer;
-      } else {
-        activePlayer.turnTimeLeft += getTurnTimeSeconds();
-        activePlayerID = event.triggeringPlayer == PLAYER_ID.ONE
-            ? PLAYER_ID.TWO
-            : PLAYER_ID.ONE;
-      }
-      _startTimerForCurrentPlayer(getActivePlayer());
     }
     yield getCurrentState();
   }
 
   ChessTimerState getCurrentState() {
     return ChessTimerState(
-      playerOne: _playerOne,
-      playerTwo: _playerTwo,
+      playerOne: PlayerState(
+          id: PLAYER_ID.ONE,
+          averageTurnSeconds: _playerOne.averageTurnSeconds,
+          numberOfTurns: _playerOne.numberOfTurns,
+          timerIsRunning: _playerOne.timerIsRunning,
+          totalTimeSeconds: _playerOne.totalTimeSeconds,
+          turnTimeLeft: _playerOne.turnTimeLeft),
+      playerTwo: PlayerState(
+          id: PLAYER_ID.TWO,
+          averageTurnSeconds: _playerTwo.averageTurnSeconds,
+          numberOfTurns: _playerTwo.numberOfTurns,
+          timerIsRunning: _playerTwo.timerIsRunning,
+          totalTimeSeconds: _playerTwo.totalTimeSeconds,
+          turnTimeLeft: _playerTwo.turnTimeLeft),
     );
   }
 

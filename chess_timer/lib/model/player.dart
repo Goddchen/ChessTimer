@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 enum PLAYER_ID { ONE, TWO }
 
 class Player {
@@ -36,32 +34,5 @@ class Player {
     } else {
       return totalTimeSeconds / numberOfTurns;
     }
-  }
-
-  @override
-  String toString() => toJson().toString();
-
-  Map toJson() => {
-        'player_id': jsonEncode(id.toString()),
-        'turnTimeLeft': turnTimeLeft,
-        'isActivePlayer': timerIsRunning,
-        'numberOfTurns': numberOfTurns,
-        'totalTimeSeconds': totalTimeSeconds,
-      };
-
-  Player fromJson(json) => Player(
-        id: _getPlayerIDFromString(json['player_id']),
-        turnTimeLeft: json['turnTimeLeft'],
-        numberOfTurns: json['numberOfTurns'],
-        secondsPlayed: json['totalTimeSeconds'],
-      );
-
-  PLAYER_ID _getPlayerIDFromString(String idAsString) {
-    for (PLAYER_ID element in PLAYER_ID.values) {
-      if (element.toString() == idAsString) {
-        return element;
-      }
-    }
-    return null;
   }
 }
