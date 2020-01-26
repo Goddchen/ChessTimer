@@ -64,7 +64,6 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
         _startTimerForCurrentPlayer(activePlayer);
       }
     } else if (event is StopEvent) {
-      activePlayerID = null;
       _playerOne.stopTimer();
       _playerTwo.stopTimer();
       if (_timer?.isRunning == true) {
@@ -76,7 +75,7 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
           builder: (context) => StatisticsScreenWidget(
               playerOne: _playerOne, playerTwo: _playerTwo),
         ),
-      ).then((_) => initPlayers());
+      );
     } else if (event is TimerTickEvent) {
       Player activePlayer = getActivePlayer();
       if (activePlayer != null) {
@@ -86,6 +85,9 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
       if (activePlayerID == event.triggeringPlayer || activePlayerID == null) {
         Player activePlayer = getActivePlayer();
         activePlayer?.stopTimer();
+        if (_prefService.getBool('vibrate_turn_end') ?? true) {
+          _vibrate.feedback(FeedbackType.short);
+        }
         if (activePlayer == null) {
           activePlayerID = event.triggeringPlayer;
         } else {
