@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  Widget buildPlayersArea({Player player, int gameTimeSeconds}) {
+  Widget buildPlayersArea({PlayerState player, int gameTimeSeconds}) {
     return Expanded(
       child: Container(
         color: AppColors.homeBackground,
