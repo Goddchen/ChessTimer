@@ -3,7 +3,6 @@ import 'package:chess_timer/blocs/events.dart';
 import 'package:chess_timer/blocs/state.dart';
 import 'package:chess_timer/common/app_colors.dart';
 import 'package:chess_timer/common/localizations.dart';
-import 'package:chess_timer/model/player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
