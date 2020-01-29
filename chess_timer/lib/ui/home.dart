@@ -74,31 +74,29 @@ class _HomePageState extends State<HomePage>
     return Container(
       color: AppColors.homeBackground,
       child: SafeArea(
-        child: Material(
-          child: Container(
-            child: BlocBuilder<ChessTimerBloc, ChessTimerState>(
-                builder: (context, state) {
-              int gameTimeSeconds = state.playerOne.totalTimeSeconds +
-                  state.playerTwo.totalTimeSeconds;
-              return Column(
-                children: <Widget>[
-                  buildPlayersArea(
-                    player: state.playerOne,
-                    gameTimeSeconds: gameTimeSeconds,
-                  ),
-                  MiddleArea(
-                    bloc: BlocProvider.of<ChessTimerBloc>(context),
-                    isRunning: state.playerOne.timerIsRunning ||
-                        state.playerTwo.timerIsRunning,
-                  ),
-                  buildPlayersArea(
-                    player: state.playerTwo,
-                    gameTimeSeconds: gameTimeSeconds,
-                  ),
-                ],
-              );
-            }),
-          ),
+        child: Container(
+          child: BlocBuilder<ChessTimerBloc, ChessTimerState>(
+              builder: (context, state) {
+            int gameTimeSeconds = state.playerOne.totalTimeSeconds +
+                state.playerTwo.totalTimeSeconds;
+            return Column(
+              children: <Widget>[
+                buildPlayersArea(
+                  player: state.playerOne,
+                  gameTimeSeconds: gameTimeSeconds,
+                ),
+                MiddleArea(
+                  bloc: BlocProvider.of<ChessTimerBloc>(context),
+                  isRunning: state.playerOne.timerIsRunning ||
+                      state.playerTwo.timerIsRunning,
+                ),
+                buildPlayersArea(
+                  player: state.playerTwo,
+                  gameTimeSeconds: gameTimeSeconds,
+                ),
+              ],
+            );
+          }),
         ),
       ),
     );
@@ -106,18 +104,15 @@ class _HomePageState extends State<HomePage>
 
   Widget buildPlayersArea({PlayerState player, int gameTimeSeconds}) {
     return Expanded(
-      child: Container(
-        color: AppColors.homeBackground,
-        child: Transform.rotate(
-          angle: player.id == PLAYER_ID.TWO ? 0 : pi,
-          child: Container(
-            margin: EdgeInsets.all(8),
-            child: Transform.scale(
-              scale: player.timerIsRunning ? _playerScale : 1,
-              child: PlayersArea(
-                player: player,
-                gameTimeSeconds: gameTimeSeconds,
-              ),
+      child: Transform.rotate(
+        angle: player.id == PLAYER_ID.TWO ? 0 : pi,
+        child: Container(
+          margin: EdgeInsets.all(8),
+          child: Transform.scale(
+            scale: player.timerIsRunning ? _playerScale : 1,
+            child: PlayersArea(
+              player: player,
+              gameTimeSeconds: gameTimeSeconds,
             ),
           ),
         ),
