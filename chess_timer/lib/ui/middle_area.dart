@@ -33,7 +33,7 @@ class MiddleArea extends StatelessWidget {
             },
           ),
           InkWell(
-            child: Icon(Icons.refresh, size: 48),
+            child: Icon(Icons.refresh, size: 44),
             onTap: () => _bloc.add(ResetEvent()),
           ),
           InkWell(
@@ -41,7 +41,7 @@ class MiddleArea extends StatelessWidget {
             onTap: () => _bloc.add(StopEvent(context)),
           ),
           InkWell(
-            child: Icon(Icons.settings, size: 48),
+            child: Icon(Icons.settings, size: 40),
             onTap: () => Navigator.push(context,
                 MaterialPageRoute(builder: (context) => SettingsWidget())),
           ),
