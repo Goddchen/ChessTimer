@@ -42,16 +42,6 @@ class PlayersArea extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             Align(
-              alignment: Alignment.center,
-              child: Text(
-                _playerLeftTime(),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 64,
-                ),
-              ),
-            ),
-            Align(
               alignment: Alignment.topCenter,
               child: Transform.rotate(
                 angle: pi,
@@ -60,6 +50,16 @@ class PlayersArea extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 24,
                   ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                _playerLeftTime(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 64,
                 ),
               ),
             ),
