@@ -21,10 +21,19 @@ class PlayersArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: _player.timerIsRunning
+                ? AppColors.player_area_active_border
+                : AppColors.player_area_inactive_border,
+            width: 4),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
       constraints: BoxConstraints.expand(),
-      child: RaisedButton(
+      child: FlatButton(
         padding: EdgeInsets.all(8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        splashColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         color: _player.timerIsRunning
             ? AppColors.player_area_active
             : AppColors.player_area_inactive,
