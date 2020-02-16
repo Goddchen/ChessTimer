@@ -31,7 +31,7 @@ class PlayersArea extends StatelessWidget {
       ),
       constraints: BoxConstraints.expand(),
       child: FlatButton(
-        padding: EdgeInsets.all(8),
+        padding: EdgeInsets.all(16),
         splashColor: Colors.transparent,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         color: _player.timerIsRunning
@@ -44,7 +44,7 @@ class PlayersArea extends StatelessWidget {
             Align(
               alignment: Alignment.center,
               child: Text(
-                playerLeftTime(),
+                _playerLeftTime(),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 64,
@@ -56,7 +56,7 @@ class PlayersArea extends StatelessWidget {
               child: Transform.rotate(
                 angle: pi,
                 child: Text(
-                  playerLeftTime(),
+                  _playerLeftTime(),
                   style: TextStyle(
                     fontSize: 24,
                   ),
@@ -80,7 +80,7 @@ class PlayersArea extends StatelessWidget {
     );
   }
 
-  String playerLeftTime() {
+  String _playerLeftTime() {
     int minutesLeft = ((_player.turnTimeLeft ?? 10) / 60).floor();
     int secondsLeft = ((_player.turnTimeLeft ?? 10) % 60);
     return '${_formatTimeLeft(minutesLeft)}:${_formatTimeLeft(secondsLeft)}';
