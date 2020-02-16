@@ -1,5 +1,6 @@
 import 'package:chess_timer/blocs/events.dart';
 import 'package:chess_timer/common/app_colors.dart';
+import 'package:chess_timer/common/transitions.dart';
 import 'package:chess_timer/ui/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:chess_timer/blocs/bloc.dart';
@@ -42,8 +43,10 @@ class MiddleArea extends StatelessWidget {
           ),
           InkWell(
             child: Icon(Icons.settings, size: 40),
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SettingsWidget())),
+            onTap: () => Navigator.push(
+              context,
+              Transitions.fadeIn(SettingsWidget()),
+            ),
           ),
         ],
       ),
