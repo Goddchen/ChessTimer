@@ -1,7 +1,7 @@
 import 'package:flutter/rendering.dart';
 
 class AppColors {
-  static const Color homeBackground = Color.fromARGB(255, 197, 213, 228);
+  static const Color background = Color.fromARGB(255, 197, 213, 228);
   static const Color player_area_active = Color.fromARGB(255, 110, 211, 126);
   static const Color player_area_active_border =
       Color.fromARGB(255, 148, 211, 158);

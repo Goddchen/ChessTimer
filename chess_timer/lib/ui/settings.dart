@@ -22,7 +22,7 @@ class SettingsWidget extends StatelessWidget {
         title: Text(AppLocalizations.of(context).get('settings')),
       ),
       body: Container(
-        color: AppColors.homeBackground,
+        color: AppColors.background,
         child: PreferencePage([
           _buildHeading(AppLocalizations.of(context).get('settings_general')),
           DropdownPreference(

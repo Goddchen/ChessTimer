@@ -72,7 +72,7 @@ class _HomePageState extends State<HomePage>
       statusBarBrightness: Brightness.light,
     ));
     return Container(
-      color: AppColors.homeBackground,
+      color: AppColors.background,
       child: SafeArea(
         child: BlocBuilder<ChessTimerBloc, ChessTimerState>(
             builder: (context, state) {
