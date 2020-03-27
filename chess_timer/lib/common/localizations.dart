@@ -32,6 +32,9 @@ class AppLocalizations {
       'settings_animate_last_seconds': 'Animate on last turn seconds',
       'settings_sound_time_up': 'Play sound when time is up',
       'settings_sound_last_seconds': 'Play sound on last turn seconds',
+      'stats_total_game_time': 'Total time of the game',
+      'stats_turns': 'Total moves',
+      'stats_avg_turn_time': 'Average time per move',
     },
     'de': {
       'app_name': 'Schach-Timer',
@@ -50,6 +53,9 @@ class AppLocalizations {
       'settings_animate_last_seconds': 'Animation in den letzten Sekunden',
       'settings_sound_time_up': 'Sound bei Ablauf der Zeit',
       'settings_sound_last_seconds': 'Sound in den letzten Sekunden',
+      'stats_total_game_time': 'Gesamtzeit des Spiels',
+      'stats_turns': 'Spielzüge',
+      'stats_avg_turn_time': 'Durchschnittliche Zugzeit',
     },
   };
 

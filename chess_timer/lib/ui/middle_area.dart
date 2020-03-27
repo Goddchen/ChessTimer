@@ -1,5 +1,6 @@
 import 'package:chess_timer/blocs/events.dart';
 import 'package:chess_timer/common/app_colors.dart';
+import 'package:chess_timer/common/transitions.dart';
 import 'package:chess_timer/ui/settings.dart';
 import 'package:flutter/material.dart';
 import 'package:chess_timer/blocs/bloc.dart';
@@ -14,8 +15,8 @@ class MiddleArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.homeBackground,
+    return Material(
+      color: Colors.transparent,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -33,7 +34,7 @@ class MiddleArea extends StatelessWidget {
             },
           ),
           InkWell(
-            child: Icon(Icons.refresh, size: 48),
+            child: Icon(Icons.refresh, size: 44),
             onTap: () => _bloc.add(ResetEvent()),
           ),
           InkWell(
@@ -41,9 +42,11 @@ class MiddleArea extends StatelessWidget {
             onTap: () => _bloc.add(StopEvent(context)),
           ),
           InkWell(
-            child: Icon(Icons.settings, size: 48),
-            onTap: () => Navigator.push(context,
-                MaterialPageRoute(builder: (context) => SettingsWidget())),
+            child: Icon(Icons.settings, size: 40),
+            onTap: () => Navigator.push(
+              context,
+              Transitions.fadeIn(SettingsWidget()),
+            ),
           ),
         ],
       ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:chess_timer/common/interfaces.dart';
+import 'package:chess_timer/common/transitions.dart';
 import 'package:chess_timer/model/player.dart';
 import 'package:chess_timer/ui/stats.dart';
 import 'package:flutter/material.dart';
@@ -69,12 +70,11 @@ class ChessTimerBloc extends Bloc<ChessTimerEvent, ChessTimerState> {
       if (_timer?.isRunning == true) {
         _timer.cancel();
       }
+
       Navigator.push(
         event.context,
-        MaterialPageRoute(
-          builder: (context) => StatisticsScreenWidget(
-              playerOne: _playerOne, playerTwo: _playerTwo),
-        ),
+        Transitions.fadeIn(StatisticsScreenWidget(
+            playerOne: _playerOne, playerTwo: _playerTwo)),
       );
     } else if (event is TimerTickEvent) {
       Player activePlayer = getActivePlayer();

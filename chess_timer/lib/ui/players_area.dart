@@ -21,10 +21,19 @@ class PlayersArea extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: _player.timerIsRunning
+                ? AppColors.player_area_active_border
+                : AppColors.player_area_inactive_border,
+            width: 4),
+        borderRadius: BorderRadius.all(Radius.circular(16)),
+      ),
       constraints: BoxConstraints.expand(),
-      child: RaisedButton(
-        padding: EdgeInsets.all(8),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: FlatButton(
+        padding: EdgeInsets.all(16),
+        splashColor: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         color: _player.timerIsRunning
             ? AppColors.player_area_active
             : AppColors.player_area_inactive,
@@ -33,24 +42,24 @@ class PlayersArea extends StatelessWidget {
         child: Stack(
           children: <Widget>[
             Align(
-              alignment: Alignment.center,
-              child: Text(
-                playerLeftTime(),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 64,
-                ),
-              ),
-            ),
-            Align(
               alignment: Alignment.topCenter,
               child: Transform.rotate(
                 angle: pi,
                 child: Text(
-                  playerLeftTime(),
+                  _playerLeftTime(),
                   style: TextStyle(
                     fontSize: 24,
                   ),
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.center,
+              child: Text(
+                _playerLeftTime(),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 64,
                 ),
               ),
             ),
@@ -71,7 +80,7 @@ class PlayersArea extends StatelessWidget {
     );
   }
 
-  String playerLeftTime() {
+  String _playerLeftTime() {
     int minutesLeft = ((_player.turnTimeLeft ?? 10) / 60).floor();
     int secondsLeft = ((_player.turnTimeLeft ?? 10) % 60);
     return '${_formatTimeLeft(minutesLeft)}:${_formatTimeLeft(secondsLeft)}';
